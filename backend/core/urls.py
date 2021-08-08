@@ -19,9 +19,30 @@ from django.urls.conf import include
 
 from rest_framework import routers
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/swagger/',
+         SpectacularSwaggerView.as_view(url_name='schema'),
+         name='swagger-ui'),
+    path('api/redoc/',
+         SpectacularRedocView.as_view(url_name='schema'),
+         name='redoc'),
+    path('api/auth/', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    path('api/token/refresh/',
+         TokenRefreshView.as_view(),
+         name='token_refresh'),
     path('api/', include(router.urls)),
 ]
