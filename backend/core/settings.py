@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework_simplejwt',
     'news.apps.NewsConfig',
+    'auth.apps.AuthConfig',
 ]
 
 MIDDLEWARE = [

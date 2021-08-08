@@ -27,9 +27,11 @@ from rest_framework_simplejwt.views import (
 )
 
 from news import urls as news_urls
+from auth import urls as auth_urls
 
 router = routers.DefaultRouter()
 router.registry.extend(news_urls.router.registry)
+router.registry.extend(auth_urls.router.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
