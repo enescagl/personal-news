@@ -3,7 +3,7 @@ from django.urls.conf import include
 
 from rest_framework import routers
 
-from . import views
+from news import views
 
 router = routers.DefaultRouter()
 router.register(r'news', views.NewsViewSet)

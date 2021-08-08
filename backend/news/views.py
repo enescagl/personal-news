@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from . import models
+from news import models
 from core.permissions import IsEditor
 from news.serializers import NewsSerializer
 # Create your views here.
