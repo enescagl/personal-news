@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'rest_framework_simplejwt',
 ]
 
@@ -80,10 +81,20 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS':
+    'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ]
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Personel News API',
+    'DESCRIPTION': 'An API for showing and entering personel news.',
+    'VERSION': '1.0.0',
+    'SCHEMA_PATH_PREFIX': '/api',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # Password validation
