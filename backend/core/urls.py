@@ -26,8 +26,10 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from news import urls as news_urls
 
 router = routers.DefaultRouter()
+router.registry.extend(news_urls.router.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
