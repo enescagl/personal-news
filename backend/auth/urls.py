@@ -3,10 +3,13 @@ from django.urls.conf import include
 
 from rest_framework import routers
 
-from . import views
+from auth import views
 
 router = routers.DefaultRouter()
-router.register(r'user', views.UserViewSet)
+router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
-urlpatterns = [path('', include(router.urls))]
+urlpatterns = [
+    path('', include(router.urls)),
+    path('users/me/', views.MeAPIView)
+]
