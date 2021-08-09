@@ -21,18 +21,6 @@ from rest_framework import routers
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-
-from news import urls as news_urls
-from auth import urls as auth_urls
-
-router = routers.DefaultRouter()
-router.registry.extend(news_urls.router.registry)
-router.registry.extend(auth_urls.router.registry)
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
@@ -43,10 +31,6 @@ urlpatterns = [
          SpectacularRedocView.as_view(url_name='schema'),
          name='redoc'),
     path('api/auth/', include('rest_framework.urls')),
-    path('api/token/', TokenObtainPairView.as_view(),
-         name='token_obtain_pair'),
-    path('api/token/refresh/',
-         TokenRefreshView.as_view(),
-         name='token_refresh'),
-    path('api/', include(router.urls)),
+    path('api/', include('news.urls')),
+    path('api/', include('authentication.urls')),
 ]

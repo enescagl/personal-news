@@ -1,9 +1,9 @@
 from django.db import models
-from core import models as core_models
+from core.models import TimestampedModel
 
 
 # Create your models here.
-class News(core_models.TimestampedModel):
+class News(TimestampedModel):
     heading = models.CharField(max_length=128)
     body = models.TextField()
     short_description = models.CharField(max_length=256)

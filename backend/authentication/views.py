@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, User
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
-from auth.serializers import UserSerializer, GroupSerializer
+from authentication.serializers import UserSerializer, GroupSerializer
 
 
 # Create your views here.
@@ -19,7 +19,6 @@ class MeAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        print(self.request)
         return self.request.user
 
 

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework_simplejwt',
     'news.apps.NewsConfig',
-    'auth.apps.AuthConfig',
+    'authentication.apps.AuthenticationConfig',
 ]
 
 MIDDLEWARE = [
@@ -90,8 +91,12 @@ REST_FRAMEWORK = {
     'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
+        # 'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+    'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE':
+    10
 }
 
 SPECTACULAR_SETTINGS = {
@@ -150,6 +155,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

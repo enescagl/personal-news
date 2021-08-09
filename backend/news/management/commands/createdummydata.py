@@ -25,8 +25,7 @@ class Command(BaseCommand):
                 text,
                 short_description=requests.get(
                     "https://loripsum.net/api/1/short/plaintext").text,
-                cover_image=
-                f"http://localhost:8000/static/img/cover_images/{index}.jpg",
+                cover_image=f"static/img/cover_images/{index}.jpg",
             ) for index in range(100)
         ]
         new_news = News.objects.bulk_create(list(list_of_news))

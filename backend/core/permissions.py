@@ -8,10 +8,11 @@ class IsEditor(BasePermission):
     news only for editors.
     """
     def has_permission(self, request, view):
-        if view.action == 'list':
+        action = getattr(view, 'action', None)
+        if action is not None and action == 'list':
             return True
-
+        user = request.user
         is_user_editor = Group.objects.get(name='Editor').user_set.filter(
-            id=request.user.id).exists()
+            id=user.id).exists()
 
-        return request.user and request.user.is_authenticated and is_user_editor
+        return user and user.is_authenticated and is_user_editor
