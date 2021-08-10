@@ -1,6 +1,16 @@
 <template>
   <header class="border-b border-gray-200">
-    <nav class="flex flex-col items-center justify-between py-2 space-y-8">
+    <nav
+      class="
+        flex flex-col
+        items-center
+        justify-between
+        py-2
+        space-y-8
+        sm:flex-row sm:max-w-screen-sm sm:mx-auto
+        md:max-w-screen-md
+      "
+    >
       <div class="font-bold text-4xl">
         <router-link :to="{ name: 'Home' }">Logo</router-link>
       </div>
@@ -21,9 +31,6 @@
             <template slot="button">Profile</template>
             <template slot="content">
               <ul>
-                <li>
-                  <router-link :to="{ name: 'Settings' }">Settings</router-link>
-                </li>
                 <li>
                   <button @click="logout">Logout</button>
                 </li>
@@ -47,18 +54,15 @@ export default {
   },
   computed: {
     currentUser() {
-      const data = localStorage.getItem("userData");
-      return JSON.parse(data);
+      return JSON.parse(localStorage.getItem("userData"));
     },
-  },
-  mounted() {
-    console.log(this.currentUser);
   },
   methods: {
     logout() {
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
       localStorage.removeItem("userData");
+      this.$router.push({ name: "Home" });
     },
   },
 };

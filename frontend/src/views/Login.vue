@@ -68,11 +68,9 @@ export default {
           username: this.username,
           password: this.password,
         })
-        .then(async ({ data }) => {
-          console.log("Veri gönderildi");
-          console.log(data);
-          this.jwtService.setTokenToLocal(data.access);
-          const currentUser = await this.$http.get("/users/me/");
+        .then(async (resp) => {
+          this.jwtService.setTokenToLocal(resp.data.access);
+          const currentUser = await this.$http.get("/authentication/me/");
           this.jwtService.setUserDataToLocal(JSON.stringify(currentUser.data));
           this.$router.push({ name: "Home" });
         });

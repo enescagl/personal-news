@@ -1,5 +1,5 @@
 export default {
-  loginEndpoint: "/token/",
+  loginEndpoint: "/authentication/login/",
   // refreshEndpoint: "/token/refresh/",
 
   tokenType: "Bearer",
