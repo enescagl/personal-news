@@ -94,7 +94,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
+    'core.paginations.PaginationWithSize',
     'PAGE_SIZE':
     10
 }
