@@ -45,8 +45,8 @@
 </template>
 
 <script>
-import JwtService from "@/services/jwt";
 import ArrowRightSVG from "@/assets/svgs/arrow-right.svg";
+import { mapActions, mapState } from "vuex";
 export default {
   components: {
     ArrowRightSVG,
@@ -55,25 +55,19 @@ export default {
     return {
       username: "",
       password: "",
-      jwtService: null,
     };
   },
-  mounted() {
-    this.jwtService = new JwtService(this.$http);
+  computed: {
+    ...mapState("layout", ["isUserLoggedIn", "loggedInUser"]),
   },
   methods: {
+    ...mapActions("layout", ["loginUser"]),
     async login() {
-      this.jwtService
-        .login({
-          username: this.username,
-          password: this.password,
-        })
-        .then(async (resp) => {
-          this.jwtService.setTokenToLocal(resp.data.access);
-          const currentUser = await this.$http.get("/authentication/me/");
-          this.jwtService.setUserDataToLocal(JSON.stringify(currentUser.data));
-          this.$router.push({ name: "Home" });
-        });
+      await this.loginUser({
+        username: this.username,
+        password: this.password,
+      });
+      this.$router.push({ name: "Home" });
     },
   },
 };

@@ -18,21 +18,13 @@
         <li>
           <router-link :to="{ name: 'News' }">News</router-link>
         </li>
-        <li
-          v-if="
-            currentUser &&
-            currentUser.groups.filter((g) => g.name === 'Admin').length > 0
-          "
-        >
-          <router-link :to="{ name: 'Users' }">Users</router-link>
-        </li>
-        <li v-if="currentUser">
+        <li v-if="isUserLoggedIn">
           <ENavDropdown>
             <template slot="button">Profile</template>
             <template slot="content">
               <ul>
-                <li>
-                  <button @click="logout">Logout</button>
+                <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
+                  <button class="w-full" @click="logout">Logout</button>
                 </li>
               </ul>
             </template>
@@ -48,14 +40,21 @@
 
 <script>
 import ENavDropdown from "@/components/ENavDropdown.vue";
+import { mapState } from "vuex";
 export default {
   components: {
     ENavDropdown,
   },
   computed: {
-    currentUser() {
-      return JSON.parse(localStorage.getItem("userData"));
-    },
+    ...mapState("layout", ["isUserLoggedIn", "loggedInUser"]),
+    // isUserInEditorGroup() {
+    //   return (
+    //     this.loggedInUser.groups.filter((g) => g.name === "Admin").length > 0
+    //   );
+    // },
+    // currentUser() {
+    //   return JSON.parse(localStorage.getItem("userData"));
+    // },
   },
   methods: {
     logout() {
@@ -64,6 +63,11 @@ export default {
       localStorage.removeItem("userData");
       this.$router.push({ name: "Home" });
     },
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.$forceUpdate();
+    });
   },
 };
 </script>

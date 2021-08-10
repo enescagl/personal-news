@@ -4,7 +4,7 @@
       <h2>Latest News</h2>
       <div class="overflow-hidden">
         <router-link
-          v-if="userLoggedIn"
+          v-if="isUserLoggedIn"
           :to="{ name: 'AddNews' }"
           class="block px-2 py-2 bg-gray-200 rounded-full"
         >
@@ -71,6 +71,7 @@ export default {
     };
   },
   computed: {
+    ...mapState("layout", ["isUserLoggedIn"]),
     ...mapState("news", ["currentPage"]),
     userLoggedIn() {
       return JSON.parse(localStorage.getItem("userData"));
@@ -87,16 +88,21 @@ export default {
     async changePage(pageNumber) {
       this.currentPageNumber = pageNumber.target.value;
       await this.getPage(this.currentPageNumber);
-      console.log(this.allNews);
+      this.allNews = this.currentPage.results;
     },
     async runFilter() {
-      await this.getPageWithFilter({
-        page: this.currentPageNumber,
-        filter: this.searchTerm,
-      });
+      if (this.searchTerm) {
+        await this.getPageWithFilter({
+          page: this.currentPageNumber,
+          filter: this.searchTerm,
+        });
+        this.allNews = this.currentPage.results;
+      } else {
+        await this.getPage(this.currentPageNumber);
+        this.allNews = this.currentPage.results;
+      }
     },
   },
-
   async mounted() {
     await this.getPage(this.currentPageNumber);
     this.allNews = this.currentPage.results;

@@ -15,21 +15,26 @@
           <div class="text-xs font-light text-gray-400">
             {{ getHumanReadableDate(data.created_at) }}
           </div>
-          <ENavDropdown v-if="userLoggedIn">
+          <ENavDropdown v-if="isUserLoggedIn">
             <template slot="button">
               <MoreVerticalSVG class="text-gray-500 w-4 h-4" />
             </template>
             <template slot="content">
-              <div class="border-b border-gray-500">{{ data.heading }}</div>
-              <ul>
-                <li>
+              <div class="border-b border-gray-500 md:hidden">
+                {{ data.heading }}
+              </div>
+              <ul class="pt-1 md:pt-0">
+                <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
                   <router-link
+                    class="text-center block w-full"
                     :to="{ name: 'EditNews', params: { id: data.id } }"
                     >Edit</router-link
                   >
                 </li>
-                <li>
-                  <button @click="remove(data.id)">Delete</button>
+                <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
+                  <button class="w-full" @click="remove(data.id)">
+                    Delete
+                  </button>
                 </li>
               </ul>
             </template>
@@ -49,7 +54,7 @@
 <script>
 import MoreVerticalSVG from "@/assets/svgs/more-vertical.svg";
 import ENavDropdown from "@/components/ENavDropdown.vue";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   components: {
     MoreVerticalSVG,
@@ -62,12 +67,13 @@ export default {
     },
   },
   computed: {
-    ...mapActions("news", ["remove"]),
-    userLoggedIn() {
-      return JSON.parse(localStorage.getItem("userData"));
-    },
+    ...mapState("layout", ["isUserLoggedIn", "loggedInUser"]),
+    // userLoggedIn() {
+    //   return JSON.parse(localStorage.getItem("userData"));
+    // },
   },
   methods: {
+    ...mapActions("news", ["remove"]),
     getHumanReadableDate(date) {
       return new Date(date).toDateString();
     },
