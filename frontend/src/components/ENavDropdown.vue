@@ -37,9 +37,9 @@
           hidden
           md:block
           absolute
-          shadow-lg
+          shadow-sm
           border
-          w-48
+          w-36
           rounded
           py-1
           px-2
@@ -75,7 +75,7 @@
           z-20
           px-2
           py-2
-          shadow-2xl
+          shadow
           leading-loose
         "
         @click="open = false"
