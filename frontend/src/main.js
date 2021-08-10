@@ -9,8 +9,11 @@ Vue.config.productionTip = false;
 
 Vue.use(axiosPlugin);
 
-new Vue({
+const app = new Vue({
   router,
   store,
   render: (h) => h(App),
-}).$mount("#app");
+});
+
+store.$app = app;
+app.$mount("#app");
