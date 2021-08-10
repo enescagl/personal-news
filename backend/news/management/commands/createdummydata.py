@@ -35,7 +35,7 @@ class Command(BaseCommand):
                     f'https://loripsum.net/api/{random_length}/plaintext').
                 text,
                 short_description=requests.get(
-                    'https://loripsum.net/api/1/short/plaintext').text,
+                    'https://loripsum.net/api/1/short/plaintext').text[:250],
                 cover_image=f'img/cover_images/{index}.jpg',
             ) for index in range(100)
         ]
