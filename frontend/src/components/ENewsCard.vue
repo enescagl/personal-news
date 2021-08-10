@@ -1,19 +1,75 @@
 <template>
-  <div class="relative rounded flex flex-col mx-auto my-4 shadow">
-    <div>
-      <img class="w-full h-full" :src="data.cover_image" alt="" />
+  <div class="py-2 flex items-center justify-between">
+    <div class="flex flex-col justify-between space-y-4 w-3/4">
+      <router-link
+        class="no-underline space-y"
+        :to="{ name: 'SingleNews', params: { id: data.id } }"
+      >
+        <span class="text-sm font-medium">{{ data.heading }}</span>
+        <div class="truncate text-xs text-gray-500">
+          {{ data.short_description }}
+        </div>
+      </router-link>
+      <div>
+        <div class="flex justify-between">
+          <div class="text-xs font-light text-gray-400">
+            {{ getHumanReadableDate(data.created_at) }}
+          </div>
+          <ENavDropdown v-if="userLoggedIn">
+            <template slot="button">
+              <MoreVerticalSVG class="text-gray-500 w-4 h-4" />
+            </template>
+            <template slot="content">
+              <div class="border-b border-gray-500">{{ data.heading }}</div>
+              <ul>
+                <li>
+                  <router-link
+                    :to="{ name: 'EditNews', params: { id: data.id } }"
+                    >Edit</router-link
+                  >
+                </li>
+                <li>
+                  <button @click="remove(data.id)">Delete</button>
+                </li>
+              </ul>
+            </template>
+          </ENavDropdown>
+        </div>
+      </div>
     </div>
-    <div class="absolute">{{ data.heading }}</div>
-    <div class="bg-gray-100 truncate">{{ data.short_description }}</div>
+    <router-link
+      class="w-1/5"
+      :to="{ name: 'SingleNews', params: { id: data.id } }"
+    >
+      <img class="w-full" :src="data.cover_image" alt="" />
+    </router-link>
   </div>
 </template>
 
 <script>
+import MoreVerticalSVG from "@/assets/svgs/more-vertical.svg";
+import ENavDropdown from "@/components/ENavDropdown.vue";
+import { mapActions } from "vuex";
 export default {
+  components: {
+    MoreVerticalSVG,
+    ENavDropdown,
+  },
   props: {
     data: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    ...mapActions("news", ["remove"]),
+    userLoggedIn() {
+      return JSON.parse(localStorage.getItem("userData"));
+    },
+  },
+  methods: {
+    getHumanReadableDate(date) {
+      return new Date(date).toDateString();
     },
   },
 };

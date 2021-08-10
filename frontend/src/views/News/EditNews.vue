@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text">Add News</h2>
+    <h2>Edit News {{ $route.params.id }}</h2>
     <form
       @submit.prevent="createNews"
       class="flex flex-col items-center space-y-4"
@@ -52,7 +52,7 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Quote from "@editorjs/quote";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   data() {
@@ -64,7 +64,23 @@ export default {
       editor: null,
     };
   },
-  mounted() {
+  async mounted() {
+    await this.getDetail(this.$route.params.id);
+    console.log(this.currentDetail);
+    this.heading = this.currentDetail.heading;
+    if (this.currentDetail.body instanceof String) {
+      this.body = {
+        time: new Date(this.currentDetail.created_at).getTime() / 1000,
+        blocks: [
+          {
+            type: "paragraph",
+            data: { text: this.currentDetail.body },
+          },
+        ],
+      };
+    } else this.body = JSON.parse(this.currentDetail.body);
+    this.shortDescription = this.currentDetail.short_description;
+
     // eslint-disable-next-line no-unused-vars
     this.editor = new EditorJS({
       tools: {
@@ -86,10 +102,14 @@ export default {
           },
         },
       },
+      data: this.body,
     });
   },
+  computed: {
+    ...mapState("news", ["currentDetail"]),
+  },
   methods: {
-    ...mapActions("news", ["create"]),
+    ...mapActions("news", ["change", "getDetail"]),
     async createNews() {
       const form = new FormData();
       const editorCleanData = await this.editor.save();
@@ -98,7 +118,8 @@ export default {
       form.append("cover_image", this.$refs["cover-image"].files[0]);
       form.append("body", JSON.stringify(editorCleanData));
 
-      this.create(form);
+      this.change(this.$route.params.id, form);
+
       this.$router.push({ name: "NewsIndex" });
     },
   },
