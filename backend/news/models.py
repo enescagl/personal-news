@@ -7,4 +7,4 @@ class News(TimestampedModel):
     heading = models.CharField(max_length=128)
     body = models.TextField()
     short_description = models.CharField(max_length=256)
-    cover_image = models.ImageField(upload_to="static/img/cover_images")
+    cover_image = models.ImageField(upload_to="img/cover_images")
