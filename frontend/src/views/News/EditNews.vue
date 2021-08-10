@@ -2,7 +2,7 @@
   <div>
     <h2>Edit News {{ $route.params.id }}</h2>
     <form
-      @submit.prevent="createNews"
+      @submit.prevent="saveNews"
       class="flex flex-col items-center space-y-4"
     >
       <div class="relative overflow-hidden inline-block w-full">
@@ -57,18 +57,41 @@ import { mapActions, mapState } from "vuex";
 export default {
   data() {
     return {
+      id: "",
       heading: "",
       shortDescription: "",
       coverImage: "",
+      coverImageChanged: false,
       body: "",
       editor: null,
     };
   },
+  computed: {
+    ...mapState("news", ["currentDetail"]),
+  },
+  methods: {
+    ...mapActions("news", ["change", "getDetail"]),
+    async saveNews() {
+      const form = new FormData();
+      const editorCleanData = await this.editor.save();
+
+      form.append("heading", this.heading);
+      form.append("short_description", this.shortDescription.slice(0, 250));
+      if (this.coverImageChanged) {
+        form.append("cover_image", this.$refs["cover-image"].files[0]);
+      }
+      form.append("body", JSON.stringify(editorCleanData));
+
+      this.change({ id: this.id, obj: form });
+
+      this.$router.push({ name: "NewsIndex" });
+    },
+  },
   async mounted() {
     await this.getDetail(this.$route.params.id);
-    console.log(this.currentDetail);
     this.heading = this.currentDetail.heading;
-    if (this.currentDetail.body instanceof String) {
+    this.id = this.currentDetail.id;
+    if (typeof this.currentDetail.body === "string") {
       this.body = {
         time: new Date(this.currentDetail.created_at).getTime() / 1000,
         blocks: [
@@ -78,9 +101,10 @@ export default {
           },
         ],
       };
-    } else this.body = JSON.parse(this.currentDetail.body);
-    this.shortDescription = this.currentDetail.short_description;
-
+    } else {
+      this.body = JSON.parse(this.currentDetail.body);
+    }
+    this.shortDescription = this.currentDetail["short_description"];
     // eslint-disable-next-line no-unused-vars
     this.editor = new EditorJS({
       tools: {
@@ -104,24 +128,6 @@ export default {
       },
       data: this.body,
     });
-  },
-  computed: {
-    ...mapState("news", ["currentDetail"]),
-  },
-  methods: {
-    ...mapActions("news", ["change", "getDetail"]),
-    async createNews() {
-      const form = new FormData();
-      const editorCleanData = await this.editor.save();
-      form.append("heading", this.heading);
-      form.append("short_description", this.shortDescription);
-      form.append("cover_image", this.$refs["cover-image"].files[0]);
-      form.append("body", JSON.stringify(editorCleanData));
-
-      this.change(this.$route.params.id, form);
-
-      this.$router.push({ name: "NewsIndex" });
-    },
   },
 };
 </script>
