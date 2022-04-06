@@ -3,7 +3,7 @@
     <div class="flex flex-col justify-between space-y-4 w-3/4">
       <router-link
         class="no-underline space-y"
-        :to="{ name: 'SingleNews', params: { id: data.id } }"
+        :to="{ name: 'ArticleDetail', params: { id: data.id } }"
       >
         <span class="text-sm font-medium">{{ data.heading }}</span>
         <div class="truncate text-xs text-gray-500">
@@ -28,8 +28,8 @@
                   <router-link
                     class="text-center block w-full"
                     :to="{ name: 'EditNews', params: { id: data.id } }"
-                    >Edit</router-link
-                  >
+                    >Edit
+                  </router-link>
                 </li>
                 <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
                   <button class="w-full" @click="remove(data.id)">
@@ -44,7 +44,7 @@
     </div>
     <router-link
       class="w-1/5"
-      :to="{ name: 'SingleNews', params: { id: data.id } }"
+      :to="{ name: 'ArticleDetail', params: { id: data.id } }"
     >
       <img class="w-full" :src="data.cover_image" alt="" />
     </router-link>
@@ -54,7 +54,8 @@
 <script>
 import MoreVerticalSVG from "@/assets/svgs/more-vertical.svg";
 import ENavDropdown from "@/components/ENavDropdown.vue";
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
+
 export default {
   components: {
     MoreVerticalSVG,
@@ -73,7 +74,9 @@ export default {
     // },
   },
   methods: {
-    ...mapActions("news", ["remove"]),
+    async remove(id) {
+      this.$emit("remove", id);
+    },
     getHumanReadableDate(date) {
       return new Date(date).toDateString();
     },

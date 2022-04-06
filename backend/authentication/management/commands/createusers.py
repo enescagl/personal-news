@@ -1,5 +1,6 @@
+from authentication.models import User
+from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import Group, User
 
 
 class Command(BaseCommand):
@@ -13,13 +14,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         groups = Group.objects.all()
         if ['Editor', 'Admin'] not in groups:
-            editor_group = Group.objects.get_or_create(name='Editor')
-            admin_group = Group.objects.get_or_create(name='Admin')
+            _groups = [
+                Group(name='Editor'),
+                Group(name='Admin')
+            ]
+            Group.objects.bulk_create(_groups)
 
         try:
             if options['group'] in ['Editor', 'Admin']:
-                editor_group = groups.filter(name='Editor').get()
-                admin_group = groups.filter(name='Admin').get()
+                editor_group = groups.filter(name='Editor').first()
+                admin_group = groups.filter(name='Admin').first()
                 if options['group'] == 'Editor':
                     demo_editor = User.objects.create_user(
                         'demo_editor', 'demo_editor@demo.com', '123456789')

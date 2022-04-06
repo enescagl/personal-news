@@ -1,63 +1,94 @@
 import jwtDefaultConfig from "./config";
+import router from "@/router";
 
 export default class JwtService {
-  axiosIns = null;
-
   jwtConfig = { ...jwtDefaultConfig };
 
-  constructor(axiosIns) {
-    this.axiosIns = axiosIns;
-    this.jwtConfig = { ...this.jwtConfig };
-
-    this.axiosIns.interceptors.request.use(
-      (config) => {
-        const accessToken = this.getTokenFromLocal();
-        if (accessToken) {
-          config.headers.Authorization = `${this.jwtConfig.tokenType} ${accessToken}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    this.axiosIns.interceptors.response.use(
-      (response) => response,
-      // eslint-disable-next-line no-unused-vars
-      (_error) => {}
-    );
+  constructor(axiosInstance) {
+    this.fillAxiosHeader(axiosInstance);
+    this.handleUnauthorizedRequest(axiosInstance);
   }
 
-  getTokenFromLocal() {
+  getToken() {
     return localStorage.getItem(this.jwtConfig.storageTokenKeyName);
   }
 
-  getRefreshTokenFromLocal() {
+  deleteToken() {
+    localStorage.removeItem(this.jwtConfig.storageTokenKeyName);
+  }
+
+  getRefreshToken() {
     return localStorage.getItem(this.jwtConfig.storageRefreshTokenKeyName);
   }
 
-  setTokenToLocal(value) {
+  deleteRefreshToken() {
+    localStorage.removeItem(this.jwtConfig.storageRefreshTokenKeyName);
+  }
+
+  setToken(value) {
     localStorage.setItem(this.jwtConfig.storageTokenKeyName, value);
   }
 
-  setUserDataToLocal(value) {
+  setUserData(value) {
     localStorage.setItem(this.jwtConfig.storageUserKeyName, value);
   }
 
-  getUserDataFromLocal() {
+  getUserData() {
     localStorage.getItem(this.jwtConfig.storageUserKeyName);
   }
 
-  setRefreshTokenToLocal(value) {
+  setRefreshToken(value) {
     localStorage.setItem(this.jwtConfig.storageRefreshTokenKeyName, value);
   }
 
-  login(args) {
-    return this.axiosIns.post(this.jwtConfig.loginEndpoint, args);
+  fillAxiosHeader(axiosInstance) {
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        const token = this.getToken();
+        if (token) {
+          config.headers[
+            "Authorization"
+          ] = `${this.jwtConfig.tokenType} ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        Promise.reject(error);
+      }
+    );
   }
 
-  refreshToken() {
-    return this.axiosIns.post(this.jwtConfig.refreshEndpoint, {
-      refreshToken: this.getRefreshTokenFromLocal(),
-    });
+  handleUnauthorizedRequest(axiosInstance) {
+    axiosInstance.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        const originalRequest = error.config;
+        if (error.response.status === 401) {
+          this.deleteToken();
+          router.push("/auth/login");
+          return Promise.reject(error);
+        }
+
+        if (error.response.status === 403 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          const refreshToken = this.getRefreshToken();
+          return axiosInstance
+            .post("token/refresh/", {
+              refresh: refreshToken,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.setToken(res.data.access);
+                axiosInstance.defaults.headers.common["Authorization"] =
+                  "Bearer " + this.getToken();
+                return axiosInstance(originalRequest);
+              }
+            });
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 }

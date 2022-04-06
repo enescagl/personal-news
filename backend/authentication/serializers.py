@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from authentication.models import Group, User
 from rest_framework import serializers
 
 
@@ -12,7 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
+        depth = 1
         model = User
-        exclude = [
-            'password', 'is_superuser', 'is_staff', 'date_joined', 'last_login'
-        ]
+        exclude = ['password', 'is_superuser']

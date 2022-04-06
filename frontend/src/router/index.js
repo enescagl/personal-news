@@ -7,7 +7,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    redirect: { name: "News" },
+    redirect: { name: "Articles" },
   },
   {
     path: "/login",
@@ -15,30 +15,30 @@ const routes = [
     component: () => import("@/views/Login.vue"),
   },
   {
-    path: "/news",
-    name: "News",
-    component: () => import("@/views/News.vue"),
-    redirect: { name: "NewsIndex" },
+    path: "/articles",
+    name: "Articles",
+    component: () => import("@/views/Articles.vue"),
+    redirect: { name: "ArticlesIndex" },
     children: [
       {
         path: "add",
-        name: "AddNews",
-        component: () => import("@/views/News/AddNews.vue"),
+        name: "AddArticle",
+        component: () => import("@/views/Articles/ArticleForm.vue"),
       },
       {
-        path: "edit/:id",
-        name: "EditNews",
-        component: () => import("@/views/News/EditNews.vue"),
+        path: "edit/:id?",
+        name: "EditArticle",
+        component: () => import("@/views/Articles/ArticleForm.vue"),
       },
       {
         path: "",
-        name: "NewsIndex",
-        component: () => import("@/views/News/Index.vue"),
+        name: "ArticlesIndex",
+        component: () => import("@/views/Articles/Index.vue"),
       },
       {
         path: ":id",
-        name: "SingleNews",
-        component: () => import("@/views/News/SingleNews.vue"),
+        name: "ArticleDetail",
+        component: () => import("@/views/Articles/ArticleDetail.vue"),
       },
     ],
   },

@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -6,7 +8,8 @@ class TimestampedModel(models.Model):
     An abstract model to use for timestamped models.
     (e.g. When record created or updated)
     """
-
+    pk_id = models.BigAutoField(primary_key=True, editable=False)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

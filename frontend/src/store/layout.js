@@ -1,4 +1,5 @@
 import JwtService from "@/services/jwt";
+
 const layoutModule = {
   namespaced: true,
   state: () => {
@@ -24,7 +25,7 @@ const layoutModule = {
         password: password,
       });
 
-      await this.jwtService.setTokenToLocal(userTokens.data.access);
+      await this.jwtService.setToken(userTokens.data.access);
       const currentUser = await this.$app.$http.get("/authentication/me/");
 
       commit("setLoggedInUser", currentUser);

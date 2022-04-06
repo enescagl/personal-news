@@ -1,15 +1,7 @@
 <template>
   <div class="relative">
     <div
-      class="
-        z-10
-        relative
-        flex
-        justify-between
-        items-center
-        focus:outline-none
-        select-none
-      "
+      class="z-10 relative flex justify-between items-center focus:outline-none select-none"
       @click="open = !open"
     >
       <slot name="button"></slot>
@@ -33,20 +25,7 @@
     >
       <div
         v-if="open"
-        class="
-          hidden
-          md:block
-          absolute
-          shadow-sm
-          border
-          w-36
-          rounded
-          py-1
-          px-2
-          text-sm
-          mt-4
-          bg-white
-        "
+        class="hidden md:block absolute shadow-sm border w-36 rounded py-1 px-2 text-sm mt-4 bg-white"
         :class="placement === 'right' ? 'right-0' : 'left-0'"
         @click="open = false"
       >
@@ -65,19 +44,7 @@
     >
       <div
         v-if="open"
-        class="
-          md:hidden
-          fixed
-          inset-x-0
-          bottom-0
-          bg-white
-          w-full
-          z-20
-          px-2
-          py-2
-          shadow
-          leading-loose
-        "
+        class="md:hidden fixed inset-x-0 bottom-0 bg-white w-full z-20 px-2 py-2 shadow leading-loose"
         @click="open = false"
       >
         <slot name="content"></slot>

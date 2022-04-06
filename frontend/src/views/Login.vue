@@ -25,17 +25,7 @@
         </div>
       </div>
       <div
-        class="
-          flex
-          items-center
-          justify-between
-          space-x-2
-          px-4
-          py-2
-          bg-gray-200
-          rounded-sm
-          border border-gray-300
-        "
+        class="flex items-center justify-between space-x-2 px-4 py-2 bg-gray-200 rounded-sm border border-gray-300"
       >
         <input type="submit" value="Login" class="bg-transparent" />
         <ArrowRightSVG class="w-5 h-5 text-gray-700" />

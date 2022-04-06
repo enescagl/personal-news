@@ -1,14 +1,11 @@
-import django
-from news.models import News
-
+import django_filters
 from django_filters.rest_framework import FilterSet
-import django_filters.rest_framework.filters as django_filters
+from news.models import Article
 
 
-class NewsFilter(FilterSet):
-    heading = django_filters.CharFilter(field_name='heading',
-                                        lookup_expr='icontains')
+class ArticleFilter(FilterSet):
+    heading = django_filters.CharFilter(field_name='heading', lookup_expr='icontains')
 
     class Meta:
-        model = News
+        model = Article
         fields = ['heading']

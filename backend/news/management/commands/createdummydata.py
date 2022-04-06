@@ -1,42 +1,75 @@
-from django.core.management.base import BaseCommand, CommandError
-from news.models import News
-import random
-import requests
 import os
+import random
+import shutil
 from pathlib import Path
+from typing import Type
+
+import requests
+from core import settings
+from django.core.management.base import BaseCommand
+from django.db import models, transaction
+from news.models import Article, ImageContent
 
 
 class Command(BaseCommand):
-    help = 'Adds 100 dummy news to database.'
+    help = 'Adds 10 dummy news to database.'
+
+    def add_arguments(self, parser):
+        parser.add_argument('--icount', type=int, help='Number of images to download', default=10)
+        parser.add_argument('--acount', type=int, help='Number of articles to create', default=10)
+
+    def _random_pick_from_model(self, model: Type[models.Model]):
+        pks = model.objects.values_list('pk', flat=True)
+        random_pk = random.choice(pks)
+        return model.objects.get(pk=random_pk)
+
+    def _download_new_images(self, count: int):
+
+        cover_image_dir = Path(settings.BASE_DIR) / 'media' / 'img' / 'cover_images'
+        if not (cover_image_dir.exists() and cover_image_dir.is_dir()):
+            self.stdout.write(
+                self.style.WARNING('Given directory doesn\'t exist.\n Creating %s.' % cover_image_dir))
+            cover_image_dir.mkdir(parents=True)
+
+        all_images = ImageContent.objects.all()
+        if os.listdir(cover_image_dir) or all_images.count() > 0:
+            self.stdout.write(self.style.WARNING('Directory is not empty.'))
+            self.stdout.write(self.style.ERROR('Deleting from both database and %s.' % cover_image_dir))
+            all_deleted, _ = all_images.delete()
+            shutil.rmtree(cover_image_dir)
+            cover_image_dir.mkdir()
+
+        self.stdout.write(self.style.SUCCESS('Downloading %s images.' % count))
+        for index in range(count):
+            with open(cover_image_dir / f'{index}.jpg', 'wb') as f:
+                r = requests.get('https://placeimg.com/640/480/arch', allow_redirects=True)
+                f.write(r.content)
 
     def handle(self, *args, **options):
+        image_count = options.get('icount')
+        article_count = options.get('acount')
+        self.stdout.write(
+            self.style.SUCCESS('Will download %s image and create %s article.' % (image_count, article_count)))
+        self._download_new_images(image_count)
 
-        dir_name = str(Path(__file__).parent.parent.parent.parent
-                       ) + '\\media\\img\\cover_images\\'
-        if os.path.exists(dir_name) and os.path.isdir(dir_name):
-            if not os.listdir(dir_name):
-                url = 'http://placeimg.com/640/480/arch'
-                for index in range(100):
-                    with open(f'media/img/cover_images/{index}.jpg',
-                              'wb') as f:
-                        r = requests.get(url, allow_redirects=True)
-                        f.write(r.content)
-            else:
-                print('Directory is not empty')
-        else:
-            print('Given directory doesn\'t exist')
+        with transaction.atomic():
+            list_of_images = [
+                ImageContent(
+                    image=f'img/cover_images/{index}.jpg',
+                    slug=requests.get('https://loripsum.net/api/1/short/plaintext').text[:-10],
+                    name=requests.get('https://loripsum.net/api/1/short/plaintext').text[:-10]
+                ) for index in range(image_count)
+            ]
+            self.stdout.write(self.style.SUCCESS('Creating images.'))
+            ImageContent.objects.bulk_create(list_of_images)
 
-        random_length = random.randint(3, 10)
-
-        list_of_news = [
-            News(
-                heading=f'{index} - News About Something',
-                body=requests.get(
-                    f'https://loripsum.net/api/{random_length}/plaintext').
-                text,
-                short_description=requests.get(
-                    'https://loripsum.net/api/1/short/plaintext').text[:250],
-                cover_image=f'img/cover_images/{index}.jpg',
-            ) for index in range(100)
-        ]
-        News.objects.bulk_create(list(list_of_news))
+            list_of_news = [
+                Article(
+                    heading=f'{index} - {requests.get("https://loripsum.net/api/1/short/plaintext").text[-50:]}',
+                    body=requests.get(f'https://loripsum.net/api/{random.randint(3, 10)}/plaintext').text,
+                    short_description=requests.get('https://loripsum.net/api/1/short/plaintext').text[:250],
+                    cover_image=self._random_pick_from_model(ImageContent),
+                ) for index in range(article_count)
+            ]
+            self.stdout.write(self.style.SUCCESS('Creating articles.'))
+            Article.objects.bulk_create(list_of_news)

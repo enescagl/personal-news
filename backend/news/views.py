@@ -1,14 +1,31 @@
+from news.filters import ArticleFilter
+from news.models import Article, ImageContent
+from news.permissions import IsEditor
+from news.serializers import (ArticleDetailSerializer, ArticleSerializer,
+                              ImageSerializer)
 from rest_framework import viewsets
-
-from news.models import News
-from core.permissions import IsEditor
-from news.serializers import NewsSerializer
-from news.filters import NewsFilter
-# Create your views here.
+from rest_framework.parsers import FormParser, MultiPartParser
 
 
-class NewsViewSet(viewsets.ModelViewSet):
-    queryset = News.objects.all()
-    serializer_class = NewsSerializer
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = ImageContent.objects.all()
+    serializer_class = ImageSerializer
     permission_classes = [IsEditor]
-    filter_class = NewsFilter
+    parser_classes = [FormParser, MultiPartParser]
+    lookup_field = 'id'
+
+
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    read_serializer_class = ArticleDetailSerializer
+    permission_classes = [IsEditor]
+    filter_class = ArticleFilter
+    lookup_field = 'id'
+
+    def get_serializer_class(self):
+        read_serializer_class = getattr(self, 'read_serializer_class', None)
+        if read_serializer_class and self.action in ['list', 'retrieve']:
+            return read_serializer_class
+        else:
+            return self.serializer_class

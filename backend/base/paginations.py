@@ -9,7 +9,8 @@ class PaginationWithSize(PageNumberPagination):
 
     def get_paginated_response(self, data):
         return Response({
-            'count': self.page.paginator.count,
-            'total_page': self.page.paginator.num_pages,
+            'total': self.page.paginator.count,
+            'max_page_size': self.max_page_size,
+            'total_pages': self.page.paginator.num_pages,
             'results': data
         })
