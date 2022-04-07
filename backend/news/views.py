@@ -1,4 +1,3 @@
-from news.filters import ArticleFilter
 from news.models import Article, ImageContent
 from news.permissions import IsEditor
 from news.serializers import (ArticleDetailSerializer, ArticleSerializer,
@@ -20,8 +19,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     read_serializer_class = ArticleDetailSerializer
     permission_classes = [IsEditor]
-    filter_class = ArticleFilter
     lookup_field = 'id'
+    search_fields = ['heading', 'short_description']
 
     def get_serializer_class(self):
         read_serializer_class = getattr(self, 'read_serializer_class', None)

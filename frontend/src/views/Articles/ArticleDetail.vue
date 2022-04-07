@@ -1,11 +1,11 @@
 <template>
   <div class="prose">
-    <h2>{{ currentArticle.heading }}</h2>
+    <h2>{{ item.heading }}</h2>
     <div>
-      <img class="w-full" :src="currentArticle.cover_image" alt="" />
+      <img class="w-full" :src="item.cover_image.image" alt="" />
     </div>
     <div
-      v-for="(block, blockId) in bodyBlocks"
+      v-for="(block, blockId) in htmlBlocks"
       :key="blockId"
       v-html="block"
     ></div>
@@ -14,33 +14,25 @@
 
 <script>
 import edjsHTML from "editorjs-html";
+import { baseMixin, retrieveMixin } from "@/mixins";
+
+const edjsParser = edjsHTML();
 
 export default {
+  mixins: [baseMixin, retrieveMixin],
   data() {
     return {
       bodyBlocks: [],
-      currentArticle: {},
+      resourceName: "articles",
     };
   },
-  methods: {
-    async getDetail(id) {
-      this.currentArticle = await this.$axios.get(`/articles/${id}/`);
-    },
-    renderBody(body) {
-      const edjsParser = edjsHTML();
-      try {
-        this.bodyBlocks = edjsParser.parse(JSON.parse(body));
-      } catch (e) {
-        console.log(e);
-        if (this.bodyBlocks.includes(undefined)) {
-          this.bodyBlocks.push(body);
-        }
+  computed: {
+    htmlBlocks() {
+      if (typeof this.item.body === "object" || Array.isArray(this.item.body)) {
+        return edjsParser.parse(this.item.body);
       }
+      return [this.item.body];
     },
-  },
-  async mounted() {
-    await this.getDetail(this.$route.params.id);
-    this.renderBody(this.currentArticle.body);
   },
 };
 </script>

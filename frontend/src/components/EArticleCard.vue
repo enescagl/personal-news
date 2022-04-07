@@ -27,14 +27,12 @@
                 <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
                   <router-link
                     class="text-center block w-full"
-                    :to="{ name: 'EditNews', params: { id: data.id } }"
+                    :to="{ name: 'EditArticle', params: { id: data.id } }"
                     >Edit
                   </router-link>
                 </li>
                 <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
-                  <button class="w-full" @click="remove(data.id)">
-                    Delete
-                  </button>
+                  <button class="w-full" @click="destroy">Delete</button>
                 </li>
               </ul>
             </template>
@@ -74,8 +72,8 @@ export default {
     // },
   },
   methods: {
-    async remove(id) {
-      this.$emit("remove", id);
+    async destroy() {
+      this.$emit("destroy");
     },
     getHumanReadableDate(date) {
       return new Date(date).toDateString();

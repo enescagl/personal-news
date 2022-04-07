@@ -5,7 +5,7 @@
       <div class="overflow-hidden">
         <router-link
           v-if="isUserLoggedIn"
-          :to="{ name: 'AddNews' }"
+          :to="{ name: 'AddArticle' }"
           class="block px-2 py-2 bg-gray-200 rounded-full"
         >
           <PenSVG class="w-5 h-5 text-gray-700" />
@@ -23,7 +23,7 @@
             type="text"
             name="search"
             id="search"
-            v-model="headingSearchTerm"
+            v-model="searchTerm"
           />
         </div>
         <div>
@@ -32,9 +32,9 @@
             name="page"
             id="page"
             v-model="currentPageNumber"
-            @change="getPageWithFilter({ page: currentPageNumber, filter: {} })"
+            @change="list({ page: currentPageNumber })"
           >
-            <option v-for="page in pageCount" :value="page" :key="page">
+            <option v-for="page in totalPages" :value="page" :key="page">
               Page {{ page }}
             </option>
           </select>
@@ -42,10 +42,10 @@
       </div>
       <div class="w-full divide-y border-gray-200">
         <EArticleCard
-          v-for="(item, idx) in items"
+          v-for="item in items"
           :data="item"
-          :key="idx"
-          @remove="remove($event)"
+          :key="item.id"
+          @destroy="destroy(item.id)"
         ></EArticleCard>
       </div>
     </div>
@@ -55,11 +55,12 @@
 import EArticleCard from "@/components/EArticleCard.vue";
 import PenSVG from "@/assets/svgs/pen.svg";
 import SearchSVG from "@/assets/svgs/search.svg";
-import { debounce } from "lodash";
+import { baseMixin, destroyMixin, filterMixin, listMixin } from "@/mixins";
 
 import { mapState } from "vuex";
 
 export default {
+  mixins: [baseMixin, listMixin, filterMixin, destroyMixin],
   components: {
     EArticleCard,
     SearchSVG,
@@ -67,11 +68,7 @@ export default {
   },
   data() {
     return {
-      items: [],
-      pageCount: 0,
-      totalItems: 0,
-      maxPageSize: 10,
-      headingSearchTerm: "",
+      resourceName: "articles",
       currentPageNumber: 1,
     };
   },
@@ -81,65 +78,8 @@ export default {
       return JSON.parse(localStorage.getItem("userData"));
     },
   },
-  watch: {
-    // eslint-disable-next-line no-unused-vars
-    searchTerm: function () {
-      this.debouncedFilteredNews();
-    },
-  },
-  methods: {
-    async getPageWithFilter({ page, filters }) {
-      // const filters = {
-      //   heading: this.searchTerm,
-      // };
-      let queryString = "";
-      for (const filterKey in filters) {
-        if (filters[filterKey]) {
-          queryString += `&${filterKey}=filter[filterKey]`;
-        }
-      }
-      const response = (
-        await this.$axios.get(`/articles/?page=${page}${queryString}`)
-      ).data;
-      this.items = [...response.results];
-      this.maxPageSize = response.max_page_size;
-      this.totalItems = response.total;
-      this.totalPages = response.num_pages;
-    },
-    resetFilters() {
-      this.headingSearchTerm = "";
-    },
-    async changePage(pageNumber) {
-      this.currentPageNumber = pageNumber.target.value;
-      await this.getPageWithFilter({
-        page: this.currentPageNumber,
-        filter: {},
-      });
-    },
-    async remove(id) {
-      await this.$axios.delete(`/articles/${id}/`);
-    },
-    async runFilter() {
-      if (this.searchTerm) {
-        await this.getPageWithFilter({
-          page: this.currentPageNumber,
-          filter: this.searchTerm,
-        });
-      } else {
-        await this.getPageWithFilter({
-          page: this.currentPageNumber,
-          filter: {},
-        });
-      }
-    },
-  },
   async mounted() {
-    await this.getPageWithFilter({ page: this.currentPageNumber, filter: {} });
-  },
-  created() {
-    this.debouncedFilteredNews = debounce(async () => {
-      await this.runFilter();
-    }, 500);
+    await this.list();
   },
 };
 </script>
