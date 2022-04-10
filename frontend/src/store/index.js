@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import NewsModule from "@/store/articles";
-import LayoutModule from "@/store/layout";
+import AuthModule from "@/store/auth";
 
 Vue.use(Vuex);
 
@@ -11,6 +11,6 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     news: NewsModule,
-    layout: LayoutModule,
+    auth: AuthModule,
   },
 });

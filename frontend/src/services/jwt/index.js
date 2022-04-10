@@ -1,94 +1,88 @@
-import jwtDefaultConfig from "./config";
+import jwtConfig from "./config";
 import router from "@/router";
 
-export default class JwtService {
-  jwtConfig = { ...jwtDefaultConfig };
+export function getToken() {
+  return localStorage.getItem(jwtConfig.STORAGE_TOKEN_KEY_NAME);
+}
 
-  constructor(axiosInstance) {
-    this.fillAxiosHeader(axiosInstance);
-    this.handleUnauthorizedRequest(axiosInstance);
-  }
+export function deleteToken() {
+  localStorage.removeItem(jwtConfig.STORAGE_TOKEN_KEY_NAME);
+}
 
-  getToken() {
-    return localStorage.getItem(this.jwtConfig.storageTokenKeyName);
-  }
+export function getRefreshToken() {
+  return localStorage.getItem(jwtConfig.STORAGE_REFRESH_TOKEN_KEY_NAME);
+}
 
-  deleteToken() {
-    localStorage.removeItem(this.jwtConfig.storageTokenKeyName);
-  }
+export function deleteRefreshToken() {
+  localStorage.removeItem(jwtConfig.STORAGE_REFRESH_TOKEN_KEY_NAME);
+}
 
-  getRefreshToken() {
-    return localStorage.getItem(this.jwtConfig.storageRefreshTokenKeyName);
-  }
+export function setToken(value) {
+  localStorage.setItem(jwtConfig.STORAGE_TOKEN_KEY_NAME, value);
+}
 
-  deleteRefreshToken() {
-    localStorage.removeItem(this.jwtConfig.storageRefreshTokenKeyName);
-  }
+export function setUserData(value) {
+  localStorage.setItem(jwtConfig.STORAGE_USER_KEY_NAME, value);
+}
 
-  setToken(value) {
-    localStorage.setItem(this.jwtConfig.storageTokenKeyName, value);
-  }
+export function getUserData() {
+  localStorage.getItem(jwtConfig.STORAGE_USER_KEY_NAME);
+}
 
-  setUserData(value) {
-    localStorage.setItem(this.jwtConfig.storageUserKeyName, value);
-  }
+export function setRefreshToken(value) {
+  localStorage.setItem(jwtConfig.STORAGE_REFRESH_TOKEN_KEY_NAME, value);
+}
 
-  getUserData() {
-    localStorage.getItem(this.jwtConfig.storageUserKeyName);
-  }
-
-  setRefreshToken(value) {
-    localStorage.setItem(this.jwtConfig.storageRefreshTokenKeyName, value);
-  }
-
-  fillAxiosHeader(axiosInstance) {
-    axiosInstance.interceptors.request.use(
-      (config) => {
-        const token = this.getToken();
-        if (token) {
-          config.headers[
-            "Authorization"
-          ] = `${this.jwtConfig.tokenType} ${token}`;
-        }
-        return config;
-      },
-      (error) => {
-        Promise.reject(error);
+export function fillAxiosHeader(axiosInstance) {
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const token = getToken();
+      if (token) {
+        config.headers["Authorization"] = `${jwtConfig.TOKEN_TYPE} ${token}`;
       }
-    );
-  }
+      return config;
+    },
+    (error) => {
+      Promise.reject(error);
+    }
+  );
+  return axiosInstance;
+}
 
-  handleUnauthorizedRequest(axiosInstance) {
-    axiosInstance.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        const originalRequest = error.config;
-        if (error.response.status === 401) {
-          this.deleteToken();
-          router.push("/auth/login");
-          return Promise.reject(error);
-        }
-
-        if (error.response.status === 403 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          const refreshToken = this.getRefreshToken();
-          return axiosInstance
-            .post("token/refresh/", {
-              refresh: refreshToken,
-            })
-            .then((res) => {
-              if (res.status === 200) {
-                this.setToken(res.data.access);
-                axiosInstance.defaults.headers.common["Authorization"] =
-                  "Bearer " + this.getToken();
-                return axiosInstance(originalRequest);
-              }
-            });
-        }
+export function handleUnauthorizedRequest(axiosInstance) {
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      const originalRequest = error.config;
+      if (error.response.status === 401) {
+        deleteToken();
+        router.push("/login");
         return Promise.reject(error);
       }
-    );
-  }
+
+      if (error.response.status === 403 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const refreshToken = getRefreshToken();
+        return axiosInstance
+          .post("auth/refresh/", {
+            refresh: refreshToken,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              setToken(res.data.access);
+              setRefreshToken(res.data.refresh);
+              const token = getToken();
+              axiosInstance.defaults.headers.common[
+                "Authorization"
+              ] = `${jwtConfig.TOKEN_TYPE} ${token}`;
+              return axiosInstance(originalRequest);
+            }
+          });
+      }
+      return Promise.reject(error);
+    }
+  );
+  return axiosInstance;
 }
