@@ -12,7 +12,6 @@ class IsEditor(BasePermission):
         action = getattr(view, 'action', None)
         if action is not None and (action == 'list' or action == 'retrieve'):
             return True
-        user = request.user
-        is_user_editor = Group.objects.get(name='Editor').user_set.filter(id=user.id).exists()
+        is_user_editor = Group.objects.get(name='Editor').user_set.filter(id=request.user.id).exists()
 
-        return user and user.is_authenticated and is_user_editor
+        return request.user and request.user.is_authenticated and is_user_editor
