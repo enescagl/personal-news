@@ -44,7 +44,7 @@
       class="w-1/5"
       :to="{ name: 'ArticleDetail', params: { id: data.id } }"
     >
-      <img class="w-full" :src="data.cover_image" alt="" />
+      <img class="w-full" :src="data.cover_image.image" alt="" />
     </router-link>
   </div>
 </template>
@@ -66,10 +66,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("layout", ["isUserLoggedIn", "loggedInUser"]),
-    // userLoggedIn() {
-    //   return JSON.parse(localStorage.getItem("userData"));
-    // },
+    ...mapState("auth", ["isUserLoggedIn"]),
   },
   methods: {
     async destroy() {

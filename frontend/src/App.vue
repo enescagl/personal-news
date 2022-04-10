@@ -3,7 +3,7 @@
     <ENavHeader></ENavHeader>
     <main class="flex-1 py-8">
       <router-view
-        class="max-w-xs mx-auto sm:max-w-screen-sm md:max-w-screen-md"
+        class="flex-1 mx-auto sm:max-w-screen-sm md:max-w-screen-md"
       />
     </main>
     <footer class="max-w-xs mx-auto sm:max-w-screen-sm md:max-w-screen-md">
@@ -14,6 +14,7 @@
 </template>
 <script>
 import ENavHeader from "@/components/ENavHeader.vue";
+
 export default {
   components: {
     ENavHeader,

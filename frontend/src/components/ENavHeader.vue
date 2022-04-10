@@ -1,7 +1,7 @@
 <template>
   <header class="border-b border-gray-200">
     <nav
-      class="flex flex-col items-center justify-between py-2 space-y-8 sm:flex-row sm:max-w-screen-sm sm:mx-auto md:max-w-screen-md"
+      class="px-8 flex flex-col items-center justify-between py-2 space-y-8 sm:flex-row sm:max-w-screen-sm sm:mx-auto md:max-w-screen-md"
     >
       <div class="font-bold text-4xl">
         <router-link :to="{ name: 'Articles' }">Logo</router-link>
@@ -32,35 +32,22 @@
 
 <script>
 import ENavDropdown from "@/components/ENavDropdown.vue";
-import { mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 
 export default {
   components: {
     ENavDropdown,
   },
   computed: {
-    ...mapState("layout", ["isUserLoggedIn", "loggedInUser"]),
-    // isUserInEditorGroup() {
-    //   return (
-    //     this.loggedInUser.groups.filter((g) => g.name === "Admin").length > 0
-    //   );
-    // },
-    // currentUser() {
-    //   return JSON.parse(localStorage.getItem("userData"));
-    // },
+    ...mapState("auth", ["currentUser"]),
+    ...mapGetters("auth", ["isUserLoggedIn"]),
   },
   methods: {
+    ...mapActions("auth", ["logoutUser"]),
     logout() {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      localStorage.removeItem("userData");
+      this.logoutUser();
       this.$router.push({ name: "Home" });
     },
-  },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.$forceUpdate();
-    });
   },
 };
 </script>

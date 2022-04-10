@@ -55,9 +55,9 @@
 import EArticleCard from "@/components/EArticleCard.vue";
 import PenSVG from "@/assets/svgs/pen.svg";
 import SearchSVG from "@/assets/svgs/search.svg";
-import { baseMixin, destroyMixin, filterMixin, listMixin } from "@/mixins";
+import { baseMixin, destroyMixin, filterMixin, listMixin } from "@/mixins/crudMixins";
 
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   mixins: [baseMixin, listMixin, filterMixin, destroyMixin],
@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("layout", ["isUserLoggedIn"]),
+    ...mapGetters("auth", ["isUserLoggedIn"]),
     userLoggedIn() {
       return JSON.parse(localStorage.getItem("userData"));
     },

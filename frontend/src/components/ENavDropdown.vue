@@ -86,8 +86,5 @@ export default {
       document.removeEventListener("keydown", onEscape);
     });
   },
-  route() {
-    this.open = false;
-  },
 };
 </script>

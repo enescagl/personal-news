@@ -14,7 +14,7 @@
 
 <script>
 import edjsHTML from "editorjs-html";
-import { baseMixin, retrieveMixin } from "@/mixins";
+import { baseMixin, retrieveMixin } from "@/mixins/crudMixins";
 
 const edjsParser = edjsHTML();
 
