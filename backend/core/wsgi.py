@@ -1,5 +1,5 @@
 """
-WSGI config for personel_news project.
+WSGI config for personal_news project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

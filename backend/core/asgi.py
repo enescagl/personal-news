@@ -1,5 +1,5 @@
 """
-ASGI config for personel_news project.
+ASGI config for personal_news project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
