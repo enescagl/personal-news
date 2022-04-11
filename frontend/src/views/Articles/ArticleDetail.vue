@@ -2,7 +2,12 @@
   <div class="prose">
     <h2>{{ item.heading }}</h2>
     <div>
-      <img class="w-full" :src="item.cover_image.image" alt="" />
+      <img
+        class="w-full"
+        v-if="item.cover_image"
+        :src="item.cover_image.image"
+        alt=""
+      />
     </div>
     <div
       v-for="(block, blockId) in htmlBlocks"
@@ -23,7 +28,8 @@ export default {
   data() {
     return {
       bodyBlocks: [],
-      resourceName: "articles",
+      resourceNamePlural: "articles",
+      resourceName: "article",
     };
   },
   computed: {
