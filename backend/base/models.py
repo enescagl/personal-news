@@ -1,6 +1,14 @@
 import uuid
 
+from core import settings
 from django.db import models
+from django.utils.timezone import now
+
+
+# https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L12
+class TimestampedModelManager(models.Manager):
+    def get_querset(self):
+        return super().get_querset().filter(deleted_at__isnull=True)
 
 
 class TimestampedModel(models.Model):
@@ -13,8 +21,38 @@ class TimestampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # is_deleted = models.BooleanField(default=False)
-    # deleted_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='%(class)s_created_by'
+    )
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='%(class)s_updated_by'
+    )
+
+    # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L20
+    deleted_at = models.DateTimeField(auto_now=True)
+    objects = TimestampedModelManager()
+    objects_with_deleted = models.Manager()
+
+    # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L27
+    def delete(self, hard=False, using=None, keep_parents=False):
+        if hard:
+            super().delete(using=None, keep_parents=False)
+        else:
+            self.deleted_at = now()
+            self.save()
+
+    # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L34
+    def restore(self):
+        self.deleted_at = None
+        self.save()
 
     class Meta:
         # By default, any model that inherits from `TimestampedModel` should
