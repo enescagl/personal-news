@@ -4,7 +4,7 @@ import {
   setRefreshToken,
   setToken,
 } from "@/services/jwt";
-import { SET_CURRENT_USER } from "./mutation-types";
+import { SET_CURRENT_USER } from "./mutation-types/auth";
 
 const authModule = {
   namespaced: true,
@@ -42,7 +42,11 @@ const authModule = {
       return !!state.currentUser.email;
     },
     currentUserPermissions(state) {
-      return state.currentUser?.flat;
+      return [
+        ...new Set(
+          state.currentUser?.groups.map((group) => group.permissions).flat()
+        ),
+      ];
     },
   },
 };

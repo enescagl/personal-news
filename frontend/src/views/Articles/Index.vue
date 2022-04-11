@@ -4,7 +4,7 @@
       <h2>Latest News</h2>
       <div class="overflow-hidden">
         <router-link
-          v-if="isUserLoggedIn"
+          v-if="isUserLoggedIn && hasPermission(ADD)"
           :to="{ name: 'AddArticle' }"
           class="block px-2 py-2 bg-gray-200 rounded-full"
         >
@@ -55,12 +55,26 @@
 import EArticleCard from "@/components/EArticleCard.vue";
 import PenSVG from "@/assets/svgs/pen.svg";
 import SearchSVG from "@/assets/svgs/search.svg";
-import { baseMixin, destroyMixin, filterMixin, listMixin } from "@/mixins/crudMixins";
+import {
+  baseMixin,
+  destroyMixin,
+  filterMixin,
+  listMixin,
+} from "@/mixins/crudMixins";
+
+import { userHasPermissionMixin } from "@/mixins/permissionMixins";
 
 import { mapGetters } from "vuex";
+import { ADD } from "@/permission-types";
 
 export default {
-  mixins: [baseMixin, listMixin, filterMixin, destroyMixin],
+  mixins: [
+    baseMixin,
+    listMixin,
+    filterMixin,
+    destroyMixin,
+    userHasPermissionMixin,
+  ],
   components: {
     EArticleCard,
     SearchSVG,
@@ -68,8 +82,10 @@ export default {
   },
   data() {
     return {
-      resourceName: "articles",
+      resourceName: "article",
+      resourceNamePlural: "articles",
       currentPageNumber: 1,
+      ADD,
     };
   },
   computed: {

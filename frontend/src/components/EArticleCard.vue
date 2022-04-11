@@ -19,20 +19,35 @@
             <template slot="button">
               <MoreVerticalSVG class="text-gray-500 w-4 h-4" />
             </template>
-            <template slot="content">
+            <template v-slot:content>
               <div class="border-b border-gray-500 md:hidden">
                 {{ data.heading }}
               </div>
               <ul class="pt-1 md:pt-0">
-                <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
+                <li
+                  v-if="hasPermission(CHANGE, 'article')"
+                  class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900"
+                >
                   <router-link
                     class="text-center block w-full"
                     :to="{ name: 'EditArticle', params: { id: data.id } }"
                     >Edit
                   </router-link>
                 </li>
-                <li class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900">
+                <li
+                  v-if="hasPermission(DELETE, 'article')"
+                  class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900"
+                >
                   <button class="w-full" @click="destroy">Delete</button>
+                </li>
+                <li
+                  v-if="
+                    !hasPermission(DELETE, 'article') &&
+                    !hasPermission(CHANGE, 'article')
+                  "
+                  class="px-2 py-1 -mx-2 hover:bg-gray-200 text-gray-900"
+                >
+                  There's nothing to do.
                 </li>
               </ul>
             </template>
@@ -52,9 +67,18 @@
 <script>
 import MoreVerticalSVG from "@/assets/svgs/more-vertical.svg";
 import ENavDropdown from "@/components/ENavDropdown.vue";
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
+import { CHANGE, DELETE } from "@/permission-types";
+import { userHasPermissionMixin } from "@/mixins/permissionMixins";
 
 export default {
+  mixins: [userHasPermissionMixin],
+  data() {
+    return {
+      CHANGE,
+      DELETE,
+    };
+  },
   components: {
     MoreVerticalSVG,
     ENavDropdown,
@@ -66,7 +90,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("auth", ["isUserLoggedIn"]),
+    ...mapGetters("auth", ["isUserLoggedIn"]),
   },
   methods: {
     async destroy() {

@@ -1,7 +1,10 @@
+import debounce from "lodash.debounce";
+
 const baseMixin = {
   data() {
     return {
       resourceName: "",
+      resourceNamePlural: "",
     };
   },
 };
@@ -14,14 +17,65 @@ const filterMixin = {
     };
   },
   watch: {
-    searchTerm: function () {
-      this.list();
+    searchTerm() {
+      this.debouncedList();
     },
   },
   methods: {
+    debouncedList: debounce(function () {
+      this.list();
+    }, 750),
     resetFilters() {
       this.searchTerm = "";
       this.filters = {};
+    },
+  },
+};
+
+const createMixin = {
+  data() {
+    return {
+      item: {},
+    };
+  },
+  methods: {
+    async create(
+      item = this.item,
+      resource = this.resourceNamePlural,
+      { axiosConfig } = {}
+    ) {
+      return await this.$axios.post(`/${resource}/`, item, {
+        ...this.$axios.defaults,
+        ...axiosConfig,
+      });
+    },
+  },
+};
+
+const updateMixin = {
+  data() {
+    return {
+      item: {},
+    };
+  },
+  methods: {
+    async update(
+      item = this.item,
+      { axiosConfig } = {},
+      resource = this.resourceNamePlural,
+      partial = false
+    ) {
+      if (!partial) {
+        return await this.$axios.put(`/${resource}/${item.id}/`, item, {
+          ...this.$axios.defaults,
+          ...axiosConfig,
+        });
+      } else {
+        return await this.$axios.patch(`/${resource}/${item.id}/`, item, {
+          ...this.$axios.defaults,
+          ...axiosConfig,
+        });
+      }
     },
   },
 };
@@ -42,7 +96,7 @@ const listMixin = {
         filters: this.filters,
         search: this.searchTerm,
       },
-      resource = this.resourceName
+      resource = this.resourceNamePlural
     ) {
       let queryString = "";
 
@@ -55,7 +109,7 @@ const listMixin = {
       }
       if (search) {
         if (search) {
-          queryString += `search=${search}`;
+          queryString += `&search=${search}`;
         }
       }
 
@@ -81,9 +135,9 @@ const retrieveMixin = {
   methods: {
     async retrieve(
       lookupValue = this.$route.params[this.queryParam],
-      resource = this.resourceName
+      resource = this.resourceNamePlural
     ) {
-      const response = (await this.$axios.get(`/${resource}/${lookupValue}`))
+      const response = (await this.$axios.get(`/${resource}/${lookupValue}/`))
         .data;
 
       this.item = { ...response };
@@ -98,10 +152,18 @@ const retrieveMixin = {
 
 const destroyMixin = {
   methods: {
-    async destroy(lookupValue, resource = this.resourceName) {
-      await this.$axios.delete(`/${resource}/${lookupValue}`);
+    async destroy(lookupValue, resource = this.resourceNamePlural) {
+      await this.$axios.delete(`/${resource}/${lookupValue}/`);
     },
   },
 };
 
-export { baseMixin, filterMixin, listMixin, retrieveMixin, destroyMixin };
+export {
+  baseMixin,
+  filterMixin,
+  createMixin,
+  updateMixin,
+  listMixin,
+  retrieveMixin,
+  destroyMixin,
+};
