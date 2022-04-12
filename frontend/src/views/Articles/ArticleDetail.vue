@@ -20,11 +20,12 @@
 <script>
 import edjsHTML from "editorjs-html";
 import { baseMixin, retrieveMixin } from "@/mixins/crudMixins";
+import { parseBlocksMixin } from "@/mixins/editorjsMixins";
 
 const edjsParser = edjsHTML();
 
 export default {
-  mixins: [baseMixin, retrieveMixin],
+  mixins: [baseMixin, retrieveMixin, parseBlocksMixin],
   data() {
     return {
       bodyBlocks: [],
@@ -34,10 +35,12 @@ export default {
   },
   computed: {
     htmlBlocks() {
-      if (typeof this.item.body === "object" || Array.isArray(this.item.body)) {
-        return edjsParser.parse(this.item.body);
+      const editorjsBody = this.parse(this.item.body, this.item.created_at);
+
+      if (typeof editorjsBody === "object" || Array.isArray(editorjsBody)) {
+        return edjsParser.parse(editorjsBody);
       }
-      return [this.item.body];
+      return [editorjsBody];
     },
   },
 };

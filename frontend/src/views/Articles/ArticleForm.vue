@@ -59,7 +59,7 @@ import {
   retrieveMixin,
   updateMixin,
 } from "@/mixins/crudMixins";
-import { URLify } from "@/utils";
+import { deserializeObject, URLify } from "@/utils";
 
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
@@ -99,6 +99,7 @@ export default {
     },
     async save() {
       this.item.body = JSON.stringify(await this.editor.save());
+      this.item = deserializeObject(this.item);
       await (this.isEdit ? this.update() : this.create());
       await this.$router.push({ name: "Articles" });
     },
@@ -108,7 +109,7 @@ export default {
       this.isEdit = true;
       await this.retrieve();
       this.editor = new EditorJS({
-        data: this.parseItem(this.item.body, this.item.created_at),
+        data: this.parse(this.item.body, this.item.created_at),
         tools: {
           header: {
             class: Header,
