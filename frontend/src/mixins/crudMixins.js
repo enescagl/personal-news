@@ -61,20 +61,29 @@ const updateMixin = {
   methods: {
     async update(
       item = this.item,
+      lookupField = "id",
       { axiosConfig } = {},
       resource = this.resourceNamePlural,
       partial = false
     ) {
       if (!partial) {
-        return await this.$axios.put(`/${resource}/${item.id}/`, item, {
-          ...this.$axios.defaults,
-          ...axiosConfig,
-        });
+        return await this.$axios.put(
+          `/${resource}/${item[lookupField]}/`,
+          item,
+          {
+            ...this.$axios.defaults,
+            ...axiosConfig,
+          }
+        );
       } else {
-        return await this.$axios.patch(`/${resource}/${item.id}/`, item, {
-          ...this.$axios.defaults,
-          ...axiosConfig,
-        });
+        return await this.$axios.patch(
+          `/${resource}/${item[lookupField]}/`,
+          item,
+          {
+            ...this.$axios.defaults,
+            ...axiosConfig,
+          }
+        );
       }
     },
   },

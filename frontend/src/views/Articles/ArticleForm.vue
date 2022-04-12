@@ -60,13 +60,21 @@ import {
   updateMixin,
 } from "@/mixins/crudMixins";
 import { URLify } from "@/utils";
+
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Quote from "@editorjs/quote";
+import { parseBlocksMixin } from "@/mixins/editorjsMixins";
 
 export default {
-  mixins: [baseMixin, retrieveMixin, createMixin, updateMixin],
+  mixins: [
+    baseMixin,
+    retrieveMixin,
+    createMixin,
+    updateMixin,
+    parseBlocksMixin,
+  ],
   data() {
     return {
       resourceName: "article",
@@ -89,28 +97,9 @@ export default {
         header: { "content-type": "multipart/form-data" },
       });
     },
-    parseItem(body, time) {
-      let bodyAsJson;
-      try {
-        bodyAsJson = JSON.parse(body);
-      } catch (e) {
-        bodyAsJson = body;
-      }
-      return {
-        time: Date.parse(time),
-        blocks: [
-          {
-            type: "paragraph",
-            data: {
-              text: bodyAsJson,
-            },
-          },
-        ],
-      };
-    },
     async save() {
-      this.item.body = await this.editor.save();
-      await (this.isEdit ? this.create() : this.update());
+      this.item.body = JSON.stringify(await this.editor.save());
+      await (this.isEdit ? this.update() : this.create());
       await this.$router.push({ name: "Articles" });
     },
   },

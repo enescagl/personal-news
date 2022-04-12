@@ -26,7 +26,7 @@ const routes = [
     path: "/articles",
     name: "Articles",
     component: () => import("@/views/Articles.vue"),
-    redirect: { name: "ArticlesIndex" },
+    redirect: { name: "ArticleList" },
     children: [
       {
         path: "add",
@@ -46,8 +46,8 @@ const routes = [
       },
       {
         path: "",
-        name: "ArticlesIndex",
-        component: () => import("@/views/Articles/Index.vue"),
+        name: "ArticleList",
+        component: () => import("@/views/Articles/ArticleList.vue"),
         meta: {
           authRequired: false,
           hasAuthView: true,
