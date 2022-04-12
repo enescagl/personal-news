@@ -37,7 +37,7 @@ class ImageContent(TimestampedModel):
             setattr(self, 'slug', slugify(self.filename_attr.name))
         super().save(*args, **kwargs)
 
-    class Meta:
+    class Meta(TimestampedModel.Meta):
         db_table = 'images'
         verbose_name_plural = 'Images'
         verbose_name = 'Image'
@@ -49,7 +49,7 @@ class Article(TimestampedModel):
     short_description = SanitizedCharField(max_length=256)
     cover_image = models.ForeignKey(ImageContent, on_delete=models.CASCADE, related_name='news')
 
-    class Meta:
+    class Meta(TimestampedModel.Meta):
         db_table = 'articles'
         verbose_name_plural = 'Articles'
         verbose_name = 'Article'

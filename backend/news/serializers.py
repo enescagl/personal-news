@@ -9,7 +9,7 @@ class ImageSerializer(TimestampedSerializer):
 
 
 class ArticleSerializer(TimestampedSerializer):
-    class Meta:
+    class Meta(TimestampedSerializer.Meta):
         model = Article
         fields = (*TimestampedSerializer.Meta.fields, 'heading', 'body', 'short_description', 'cover_image')
 
