@@ -18,6 +18,7 @@
     "core-js": "^3.6.5",
     "editorjs-html": "^3.4.0",
     "lodash.debounce": "^4.0.8",
+    "slugify": "^1.6.5",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",

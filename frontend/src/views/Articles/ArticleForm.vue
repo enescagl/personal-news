@@ -59,13 +59,14 @@ import {
   retrieveMixin,
   updateMixin,
 } from "@/mixins/crudMixins";
-import { deserializeObject, URLify } from "@/utils";
+import { deserializeObject } from "@/utils";
 
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Quote from "@editorjs/quote";
 import { parseBlocksMixin } from "@/mixins/editorjsMixins";
+import slugify from "slugify";
 
 export default {
   mixins: [
@@ -87,7 +88,7 @@ export default {
     async uploadImage() {
       const form = new FormData();
       const imageName = this.$refs["cover-image"].value;
-      const slug = URLify(imageName, imageName.length, false);
+      const slug = slugify(imageName, { lower: true });
 
       form.append("image", this.$refs["cover-image"].files[0]);
       form.append("slug", slug);
