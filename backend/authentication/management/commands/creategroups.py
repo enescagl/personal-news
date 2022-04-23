@@ -13,12 +13,15 @@ class Command(BaseCommand):
             if not group_in_db:
                 groups_to_insert.append(Group(name=group))
 
+        self.stdout.write(self.style.SUCCESS('Creating default groups. (%s)' % ', '.join(self.group_names)))
         Group.objects.bulk_create(groups_to_insert)
 
+        self.stdout.write(self.style.SUCCESS('Giving article and image permissions to \'Editor\''))
         editor_group = Group.objects.get(name='Editor')
         editor_permissions = Permission.objects.filter(content_type__model__in=['article', 'imagecontent'])
         editor_group.permissions.set(list(editor_permissions.values_list('id', flat=True)))
 
+        self.stdout.write(self.style.SUCCESS('Giving all permissions to \'Admin\''))
         admin_group = Group.objects.get(name='Admin')
         admin_permissions = Permission.objects.filter(
             content_type__model__in=['article', 'imagecontent', 'user', 'group', 'permission']

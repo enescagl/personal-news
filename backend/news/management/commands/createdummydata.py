@@ -28,18 +28,21 @@ class Command(BaseCommand):
         cover_image_dir = Path(settings.BASE_DIR) / 'media' / 'img' / 'cover_images'
         if not (cover_image_dir.exists() and cover_image_dir.is_dir()):
             self.stdout.write(
-                self.style.WARNING('Given directory doesn\'t exist.\n Creating %s.' % cover_image_dir))
+                self.style.WARNING('[WARN]: Given directory doesn\'t exist.'))
+            self.stdout.write(
+                self.style.SUCCESS('[SUCCESS]: Creating %s.' % cover_image_dir))
+
             cover_image_dir.mkdir(parents=True)
 
         all_images = ImageContent.objects.all()
         if os.listdir(cover_image_dir) or all_images.count() > 0:
-            self.stdout.write(self.style.WARNING('Directory is not empty.'))
-            self.stdout.write(self.style.ERROR('Deleting from both database and %s.' % cover_image_dir))
+            self.stdout.write(self.style.WARNING('[WARN]: Directory is not empty.'))
+            self.stdout.write(self.style.ERROR('[ERROR]: Deleting from both database and %s.' % cover_image_dir))
             all_deleted, _ = all_images.delete()
             shutil.rmtree(cover_image_dir)
             cover_image_dir.mkdir()
 
-        self.stdout.write(self.style.SUCCESS('Downloading %s images.' % count))
+        self.stdout.write(self.style.SUCCESS('[SUCCESS]: Downloading %s images.' % count))
         for index in range(count):
             with open(cover_image_dir / f'{index}.jpg', 'wb') as f:
                 r = requests.get('https://placeimg.com/640/480/arch', allow_redirects=True)
@@ -49,18 +52,21 @@ class Command(BaseCommand):
         image_count = options.get('icount')
         article_count = options.get('acount')
         self.stdout.write(
-            self.style.SUCCESS('Will download %s image and create %s article.' % (image_count, article_count)))
+            self.style.SUCCESS(
+                '[SUCCESS]: Will download %s image and create %s article.' % (image_count, article_count)
+            )
+        )
         self._download_new_images(image_count)
 
         with transaction.atomic():
             list_of_images = [
                 ImageContent(
                     image=f'img/cover_images/{index}.jpg',
-                    slug=requests.get('https://loripsum.net/api/1/short/plaintext').text[:-10],
-                    name=requests.get('https://loripsum.net/api/1/short/plaintext').text[:-10]
+                    slug=requests.get('https://loripsum.net/api/1/short/plaintext').text[:25].strip(),
+                    name=requests.get('https://loripsum.net/api/1/short/plaintext').text[:25].strip()
                 ) for index in range(image_count)
             ]
-            self.stdout.write(self.style.SUCCESS('Creating images.'))
+            self.stdout.write(self.style.SUCCESS('[SUCCESS]: Creating images.'))
             ImageContent.objects.bulk_create(list_of_images)
 
             list_of_news = [
@@ -71,5 +77,5 @@ class Command(BaseCommand):
                     cover_image=self._random_pick_from_model(ImageContent),
                 ) for index in range(article_count)
             ]
-            self.stdout.write(self.style.SUCCESS('Creating articles.'))
+            self.stdout.write(self.style.SUCCESS('[SUCCESS]: Creating articles.'))
             Article.objects.bulk_create(list_of_news)
