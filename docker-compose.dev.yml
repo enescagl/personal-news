@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    env_file:
+      - backend/.env
+    ports:
+      - "0.0.0.0:8000:8000"
+    command: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+    environment:
+      VUE_APP_BASE_URL: http://localhost:8000
+    ports:
+      - "8080:8080"
+  db:
+    ports:
+      - "5431:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+volumes:
+  api:
+  database:
+  frontend:
