@@ -65,6 +65,8 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import Quote from "@editorjs/quote";
+import ImageTool from "@editorjs/image";
+
 import { parseBlocksMixin } from "@/mixins/editorjsMixins";
 import slugify from "slugify";
 
@@ -82,10 +84,51 @@ export default {
       resourceNamePlural: "articles",
       editor: null,
       isEdit: false,
+      editorTools: {
+        header: {
+          class: Header,
+          config: {
+            placeholder: "Enter a header",
+            levels: [2, 3, 4],
+            defaultLevel: 2,
+          },
+        },
+        list: {
+          class: List,
+        },
+        quote: {
+          class: Quote,
+          config: {
+            quotePlaceholder: "Enter a quote",
+          },
+        },
+        image: {
+          class: ImageTool,
+          config: {
+            uploader: {
+              uploadByFile: this.uploadImageFromFile,
+              uploadByUrl: this.uploadImageFromUrl,
+            },
+          },
+        },
+      },
     };
   },
   methods: {
-    async uploadImage() {
+    async uploadImageFromFile() {
+      const form = new FormData();
+      const imageName = this.$refs["cover-image"].value;
+      const slug = slugify(imageName, { lower: true });
+
+      form.append("image", this.$refs["cover-image"].files[0]);
+      form.append("slug", slug);
+      form.append("name", imageName);
+
+      return await this.create(form, "/images/", {
+        header: { "content-type": "multipart/form-data" },
+      });
+    },
+    async uploadImageFromUrl() {
       const form = new FormData();
       const imageName = this.$refs["cover-image"].value;
       const slug = slugify(imageName, { lower: true });
@@ -111,25 +154,7 @@ export default {
       await this.retrieve();
       this.editor = new EditorJS({
         data: this.parse(this.item.body, this.item.created_at),
-        tools: {
-          header: {
-            class: Header,
-            config: {
-              placeholder: "Enter a header",
-              levels: [2, 3, 4],
-              defaultLevel: 2,
-            },
-          },
-          list: {
-            class: List,
-          },
-          quote: {
-            class: Quote,
-            config: {
-              quotePlaceholder: "Enter a quote",
-            },
-          },
-        },
+        tools: this.editorTools,
       });
     }
   },

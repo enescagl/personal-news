@@ -1,8 +1,10 @@
+from authentication.permissions import EIsAuth
 from news.models import Article, ImageContent
 from news.permissions import IsEditor
 from news.serializers import (ArticleDetailSerializer, ArticleSerializer,
                               ImageSerializer)
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 
 
@@ -12,6 +14,11 @@ class ImageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsEditor]
     parser_classes = [FormParser, MultiPartParser]
     lookup_field = 'id'
+
+    @action(detail=False, methods=['POST'], permission_classes=[EIsAuth], name='Image From URL',
+            url_name='image_from_url')
+    def from_url(self, request):
+        pass
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
