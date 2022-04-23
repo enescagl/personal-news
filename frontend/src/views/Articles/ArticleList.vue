@@ -90,9 +90,6 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["isUserLoggedIn"]),
-    userLoggedIn() {
-      return JSON.parse(localStorage.getItem("userData"));
-    },
   },
   async mounted() {
     await this.list();

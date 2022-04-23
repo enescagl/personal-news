@@ -21,14 +21,6 @@ export function setToken(value) {
   localStorage.setItem(jwtConfig.STORAGE_TOKEN_KEY_NAME, value);
 }
 
-export function setUserData(value) {
-  localStorage.setItem(jwtConfig.STORAGE_USER_KEY_NAME, value);
-}
-
-export function getUserData() {
-  localStorage.getItem(jwtConfig.STORAGE_USER_KEY_NAME);
-}
-
 export function setRefreshToken(value) {
   localStorage.setItem(jwtConfig.STORAGE_REFRESH_TOKEN_KEY_NAME, value);
 }
