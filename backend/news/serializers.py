@@ -5,7 +5,7 @@ from news.models import Article, ImageContent
 class ImageSerializer(TimestampedSerializer):
     class Meta:
         model = ImageContent
-        fields = (*TimestampedSerializer.Meta.fields, 'image', 'slug', 'name')
+        fields = (*TimestampedSerializer.Meta.fields, 'image', 'slug', 'name', 'url')
 
 
 class ArticleSerializer(TimestampedSerializer):

@@ -1,40 +1,33 @@
-import os
+from pathlib import Path
 
 from base.model_fields import SanitizedCharField, SanitizedTextField
 from base.models import TimestampedModel
 from base.validators import validate_image_extension
 from django.db import models
-from django.utils.text import slugify
+from django.template.defaultfilters import slugify
 
 
 def image_directory_path(content, filename):
-    _, file_ext = os.path.splitext(filename)
-    storage_file_name = f'{content.slug}{file_ext}'
-    return f'media/img/cover_images/{storage_file_name}'
-
-
-def video_directory_path(content, filename):
-    _, file_ext = os.path.splitext(filename)
-    storage_file_name = f'{content.slug}{file_ext}'
-    return f'videos/{storage_file_name}'
-
-
-def file_directory_path(content, filename):
-    _, file_ext = os.path.splitext(filename)
-    storage_file_name = f'{content.slug}{file_ext}'
-    return f'files/{storage_file_name}'
+    return f'img/{filename}'
 
 
 class ImageContent(TimestampedModel):
-    image = models.ImageField(upload_to=image_directory_path, validators=[validate_image_extension])
+    image = models.ImageField(blank=True, upload_to=image_directory_path, validators=[validate_image_extension])
+    url = models.URLField(blank=True, null=True)
     slug = SanitizedCharField(max_length=255, blank=True)
     name = SanitizedCharField(max_length=255, blank=True)
 
     def save(self, *args, **kwargs):
-        filename_attr = getattr(self, 'image')
+        image_attr = getattr(self, 'image')
         slug_attr = getattr(self, 'slug')
-        if (slug_attr == '' or slug_attr is None) and filename_attr is not None:
-            setattr(self, 'slug', slugify(self.filename_attr.name))
+        name_attr = getattr(self, 'name')
+        image_name = Path(image_attr.name).name
+
+        if not slug_attr and image_attr is not None:
+            setattr(self, 'slug', slugify(image_name))
+        if not name_attr and image_attr is not None:
+            setattr(self, 'name', slugify(image_name))
+
         super().save(*args, **kwargs)
 
     class Meta(TimestampedModel.Meta):

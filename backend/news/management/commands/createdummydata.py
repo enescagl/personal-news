@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def _download_new_images(self, count: int):
 
-        cover_image_dir = Path(settings.BASE_DIR) / 'media' / 'img' / 'cover_images'
+        cover_image_dir = Path(settings.BASE_DIR) / 'media' / 'img'
         if not (cover_image_dir.exists() and cover_image_dir.is_dir()):
             self.stdout.write(
                 self.style.WARNING('[WARN]: Given directory doesn\'t exist.'))
@@ -61,7 +61,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             list_of_images = [
                 ImageContent(
-                    image=f'img/cover_images/{index}.jpg',
+                    image=f'img/{index}.jpg',
                     slug=requests.get('https://loripsum.net/api/1/short/plaintext').text[:25].strip(),
                     name=requests.get('https://loripsum.net/api/1/short/plaintext').text[:25].strip()
                 ) for index in range(image_count)
