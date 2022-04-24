@@ -32,6 +32,7 @@ SECRET_KEY = os.environ.get(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv('DEBUG', False))
+IS_DOCKER = bool(os.getenv('IS_DOCKER', False))
 
 allowed_hosts_environment = os.environ.get('ALLOWED_HOSTS', None)
 if allowed_hosts_environment:
@@ -102,7 +103,7 @@ DATABASES = {
     }
 }
 
-if DEBUG:
+if DEBUG and not IS_DOCKER:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
