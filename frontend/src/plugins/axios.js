@@ -1,5 +1,5 @@
 import axios from "axios";
-import { handleUnauthorizedRequest, fillAxiosHeader } from "@/services/jwt";
+import { fillAxiosHeader, handleUnauthorizedRequest } from "@/services/jwt";
 
 let axiosPlugin = {};
 let $axios;
@@ -10,6 +10,7 @@ axiosPlugin.install = function (Vue, _options) {
   });
   instance = handleUnauthorizedRequest(instance);
   instance = fillAxiosHeader(instance);
+
   $axios = instance;
   Vue.prototype.$axios = instance;
 };

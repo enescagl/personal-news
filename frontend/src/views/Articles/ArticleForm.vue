@@ -115,31 +115,38 @@ export default {
     };
   },
   methods: {
-    async uploadImageFromFile() {
+    async uploadImageFromFile(file) {
       const form = new FormData();
-      const imageName = this.$refs["cover-image"].value;
+      const imageName = file.name;
       const slug = slugify(imageName, { lower: true });
 
-      form.append("image", this.$refs["cover-image"].files[0]);
+      form.append("image", file);
       form.append("slug", slug);
       form.append("name", imageName);
 
-      return await this.create(form, "/images/", {
-        header: { "content-type": "multipart/form-data" },
-      });
+      const imageResponse = (
+        await this.create(form, "images", {
+          header: { "content-type": "multipart/form-data" },
+        })
+      ).data;
+
+      return {
+        success: 1,
+        file: {
+          url: imageResponse.image,
+        },
+      };
     },
-    async uploadImageFromUrl() {
-      const form = new FormData();
-      const imageName = this.$refs["cover-image"].value;
-      const slug = slugify(imageName, { lower: true });
+    async uploadImageFromUrl(url) {
+      const imageResponse = (await this.create({ url }, "images/from_url"))
+        .data;
 
-      form.append("image", this.$refs["cover-image"].files[0]);
-      form.append("slug", slug);
-      form.append("name", imageName);
-
-      return await this.create(form, "/images/", {
-        header: { "content-type": "multipart/form-data" },
-      });
+      return {
+        success: 1,
+        file: {
+          url: imageResponse.image,
+        },
+      };
     },
     async save() {
       this.item.body = JSON.stringify(await this.editor.save());
@@ -149,15 +156,18 @@ export default {
     },
   },
   async mounted() {
+    const editorConfig = {
+      holder: "editorjs",
+      tools: this.editorTools,
+    };
     if (this.$route.params.id) {
       this.isEdit = true;
       await this.retrieve();
-      this.editor = new EditorJS({
-        data: this.parse(this.item.body, this.item.created_at),
-        tools: this.editorTools,
-      });
+      editorConfig.data = this.parse(this.item.body, this.item.created_at);
     }
+    this.editor = new EditorJS(editorConfig);
   },
+  created() {},
 };
 </script>
 
