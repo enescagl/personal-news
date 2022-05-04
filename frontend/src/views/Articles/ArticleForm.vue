@@ -9,15 +9,34 @@
       }}</span>
     </h2>
     <form @submit.prevent="save" class="flex flex-col items-center space-y-4">
-      <div class="relative overflow-hidden inline-block w-full">
-        <button class="w-full border-2 border-gray-300 rounded-sm px-2 py-2">
+      <div class="relative overflow-hidden inline-block w-full group">
+        <button
+          v-if="!item.cover_image"
+          class="w-full border-2 border-gray-300 rounded-sm px-2 py-2"
+        >
           Upload a Cover Image
+        </button>
+        <button
+          v-else
+          class="relative w-full group-hover:bg-gray-900 group-hover:opacity-75"
+        >
+          <span
+            class="block text-xl absolute h-full flex justify-center items-center inset-0 opacity-0 group-hover:opacity-100"
+          >
+            Change Cover Image
+          </span>
+          <img
+            class="w-full border-2 border-gray-300 rounded-sm px-2 py-2"
+            :src="item.cover_image"
+            alt=""
+          />
         </button>
         <input
           ref="cover-image"
           type="file"
           name="cover-image"
           class="text-8xl absolute inset-0 opacity-0"
+          @input="pickImageFile"
         />
       </div>
       <div class="flex flex-col w-full">
@@ -115,6 +134,15 @@ export default {
     };
   },
   methods: {
+    async pickImageFile() {
+      const imageFile = this.$refs["cover-image"].files[0];
+      console.log(imageFile);
+      this.item = {
+        ...this.item,
+        cover_image: (await this.uploadImageFromFile(imageFile)).file.url,
+      };
+      this.$refs["cover-image"].blur();
+    },
     async uploadImageFromFile(file) {
       const form = new FormData();
       const imageName = file.name;
@@ -167,7 +195,6 @@ export default {
     }
     this.editor = new EditorJS(editorConfig);
   },
-  created() {},
 };
 </script>
 
