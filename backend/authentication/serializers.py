@@ -1,3 +1,4 @@
+from base.serializers import TimestampedSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
@@ -17,10 +18,9 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(TimestampedSerializer):
     groups = GroupSerializer(many=True, read_only=True)
 
-    class Meta:
-        depth = 1
+    class Meta(TimestampedSerializer.Meta):
         model = get_user_model()
-        exclude = ['password', 'is_superuser', 'pk_id']
+        fields = ('id', 'groups', 'first_name', 'last_name', 'email', 'is_active')

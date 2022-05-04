@@ -37,7 +37,7 @@ class TimestampedModel(models.Model):
     )
 
     # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L20
-    deleted_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField()
     objects = TimestampedModelManager()
     objects_with_deleted = models.Manager()
 
