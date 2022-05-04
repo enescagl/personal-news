@@ -19,3 +19,8 @@ export interface User {
   email: string;
   is_active: boolean;
 }
+
+export interface Auth {
+  access: string;
+  refresh?: string;
+}

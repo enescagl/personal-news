@@ -16,9 +16,12 @@ export const useAuthStore = defineStore({
   getters: {
     isUserLoggedIn: (state) => !!state.currentUser?.email,
     currentUserPermissions: (state) => {
-      return [
-        ...new Set(state.currentUser?.groups.map((group) => group.permissions)),
-      ];
+      const permissions = new Set(
+        ...(state.currentUser
+          ? state.currentUser.groups.map((group) => group.permissions)
+          : undefined)!
+      );
+      return [...permissions];
     },
   },
   actions: {

@@ -1,6 +1,13 @@
-<script setup lang="ts">
-import { RouterView } from "vue-router";
+<script lang="ts">
+import {defineComponent} from "vue";
+import {RouterView} from "vue-router";
 import ENavHeader from "@/components/ENavHeader.vue";
+
+export default defineComponent({
+  components: {
+    RouterView, ENavHeader
+  }
+})
 </script>
 
 <template>
@@ -8,7 +15,7 @@ import ENavHeader from "@/components/ENavHeader.vue";
     <ENavHeader></ENavHeader>
     <main class="flex-1 py-8">
       <RouterView
-        class="flex-1 mx-auto sm:max-w-screen-sm md:max-w-screen-md"
+          class="flex-1 mx-auto sm:max-w-screen-sm md:max-w-screen-md"
       />
     </main>
     <footer class="max-w-xs mx-auto sm:max-w-screen-sm md:max-w-screen-md">
