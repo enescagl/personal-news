@@ -3,8 +3,13 @@ import { onMounted, reactive, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { $axios } from "@/plugins/axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
-import type { ListParams } from "@/composables/types/crud";
 import { useRoute } from "vue-router";
+
+export interface ListParams {
+  page: Ref<number>;
+  filters?: Ref | undefined;
+  search?: Ref<string> | undefined;
+}
 
 export function useItemState() {
   const item = ref({});
@@ -13,7 +18,7 @@ export function useItemState() {
   };
 }
 
-export function usePagination() {}
+// export function usePagination() {}
 
 export function useFilterOnList(
   list: (params: ListParams) => Promise<AxiosResponse>
@@ -44,8 +49,8 @@ export function useFilterOnList(
   };
 }
 
-export function useCreate(itemRef: Ref, resource: string) {
-  async function create(item = itemRef, axiosConfig: AxiosRequestConfig) {
+export function useCreate(resource: string) {
+  async function create(item: Ref, axiosConfig?: AxiosRequestConfig) {
     return await $axios.post(`/${resource}/`, item.value, {
       ...axiosConfig,
     });
@@ -56,23 +61,35 @@ export function useCreate(itemRef: Ref, resource: string) {
   };
 }
 
-export function useUpdate(itemRef: Ref, resource: string) {
+export function useUpdate(resource: string) {
   async function update(
-    item = itemRef.value,
+    item: Ref,
     lookupField = "id",
-    axiosConfig: AxiosRequestConfig,
+    axiosConfig?: AxiosRequestConfig,
     partial = false
   ) {
     if (!partial) {
-      return await $axios.put(`/${resource}/${item[lookupField]}/`, item, {
-        ...axiosConfig,
-      });
+      return await $axios.put(
+        `/${resource}/${item.value[lookupField]}/`,
+        item,
+        {
+          ...axiosConfig,
+        }
+      );
     } else {
-      return await $axios.patch(`/${resource}/${item[lookupField]}/`, item, {
-        ...axiosConfig,
-      });
+      return await $axios.patch(
+        `/${resource}/${item.value[lookupField]}/`,
+        item,
+        {
+          ...axiosConfig,
+        }
+      );
     }
   }
+
+  return {
+    update,
+  };
 }
 
 export function useList(resource: string) {
@@ -122,12 +139,20 @@ export function useList(resource: string) {
   };
 }
 
-export function useRetrieve(itemRef: Ref, resource: string, queryParam = "id") {
+export function useRetrieve({
+  resource,
+  queryParam = "id",
+  itemRef,
+}: {
+  resource: string;
+  queryParam?: string;
+  itemRef: Ref;
+}) {
   const route = useRoute();
 
   async function retrieve(
-    item = itemRef,
-    lookupValue = route.params[queryParam][0]
+    item = itemRef as Ref,
+    lookupValue = route.params[queryParam]
   ) {
     const response = await $axios.get(`/${resource}/${lookupValue}/`);
     item.value = { ...response.data };

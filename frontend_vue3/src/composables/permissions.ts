@@ -1,9 +1,9 @@
 import { useAuthStore } from "@/stores/auth";
 
+type PermissionType = "add" | "change" | "delete" | "view";
+
 export function useUserHasPermission(resource: string) {
   const authStore = useAuthStore();
-
-  type PermissionType = "add" | "change" | "delete" | "view";
 
   function hasPermission(permissionType: PermissionType) {
     return authStore.currentUserPermissions.filter(
