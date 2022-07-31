@@ -1,8 +1,9 @@
 import uuid
 
-from core import settings
 from django.db import models
 from django.utils.timezone import now
+
+from core import settings
 
 
 # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L12
@@ -37,14 +38,14 @@ class TimestampedModel(models.Model):
     )
 
     # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L20
-    deleted_at = models.DateTimeField()
+    deleted_at = models.DateTimeField(null=True)
     objects = TimestampedModelManager()
     objects_with_deleted = models.Manager()
 
     # https://github.com/drneox/django-paranoid/blob/master/django_paranoid/models.py#L27
     def delete(self, hard=False, using=None, keep_parents=False):
         if hard:
-            super().delete(using=None, keep_parents=False)
+            super().delete(using=using, keep_parents=keep_parents)
         else:
             self.deleted_at = now()
             self.save()
