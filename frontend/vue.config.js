@@ -1,4 +1,7 @@
 module.exports = {
+  devServer: {
+    public: process.env.VUE_APP_PUBLIC_DOMAIN,
+  },
   chainWebpack: (config) => {
     const svgRule = config.module.rule("svg");
 

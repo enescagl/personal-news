@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - personal_news_network
+    volumes:
+      - ./nginx/certs:/etc/certs
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - api_media:/usr/share/nginx/html/media:ro
+      - api_static:/usr/share/nginx/html/static:ro
   api:
     container_name: api
     build:
@@ -12,6 +28,11 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
       - POSTGRES_HOST
+    volumes:
+      - api_media:/app/media
+      - api_static:/app/static
+    networks:
+      - personal_news_network
   frontend:
     container_name: frontend
     build:
@@ -20,6 +41,8 @@ services:
       - api
     environment:
       VUE_APP_BASE_URL: http://api:8000
+    networks:
+      - personal_news_network
   db:
     container_name: ${POSTGRES_HOST}
     image: postgres:latest
@@ -28,12 +51,16 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    networks:
+      - personal_news_network
 #    healthcheck:
 #      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
 #      interval: 10s
 #      timeout: 5s
 #      retries: 5
+networks:
+  personal_news_network:  
 volumes:
-  api:
-  database:
+  api_media:
+  api_static:
   frontend:
