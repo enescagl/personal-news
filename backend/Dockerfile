@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt \
   && adduser news_user --disabled-password
 
 WORKDIR /app
-RUN chown -R news_user /app
+RUN chown -R news_user:news_user /app
 USER news_user:news_user
 
 COPY --chown=news_user:news_user . .
