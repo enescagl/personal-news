@@ -125,9 +125,9 @@ REST_FRAMEWORK = {
         10
 }
 
-if DEBUG:
+if not DEBUG:
     REST_FRAMEWORK.update({
-        'DEFAULT_RENDERER_CLASSES': 'rest_framework.renderers.JSONRenderer'
+        'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer']
     })
 
 SPECTACULAR_SETTINGS = {

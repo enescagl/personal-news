@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV IS_DOCKER True
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential libpq-dev \
+  && apt-get install -y --no-install-recommends build-essential libpq-dev netcat \
   && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /tmp/requirements.txt
@@ -15,10 +15,10 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt \
   && adduser news_user --disabled-password
 
 WORKDIR /app
+COPY . .
+
 RUN chown -R news_user:news_user /app
 USER news_user:news_user
-
-COPY --chown=news_user:news_user . .
 
 ENTRYPOINT [ "docker/entrypoint.sh" ]
 

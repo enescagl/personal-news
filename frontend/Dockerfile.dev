@@ -15,5 +15,5 @@ RUN yarn install
 # copy project files and folders to the current working directory (i.e. 'app' folder)
 COPY . .
 
-EXPOSE 8080
-CMD [ "yarn", "serve", "--host", "0.0.0.0", "--port", "80" ]
+EXPOSE 80
+CMD [ "yarn", "serve" ]
