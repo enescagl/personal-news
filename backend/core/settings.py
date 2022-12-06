@@ -31,8 +31,8 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv('DEBUG', False))
-IS_DOCKER = bool(os.getenv('IS_DOCKER', False))
+DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
+IS_DOCKER = os.getenv('IS_DOCKER', 'false').lower() == 'true'
 
 allowed_hosts_environment = os.environ.get('ALLOWED_HOSTS', None)
 if allowed_hosts_environment:
@@ -124,6 +124,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE':
         10
 }
+
+if not DEBUG:
+    REST_FRAMEWORK.update({
+        'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer']
+    })
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Personal Articles API',
