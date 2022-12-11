@@ -1,7 +1,7 @@
 module.exports = {
   devServer: {
     public: process.env.VUE_APP_PUBLIC_DOMAIN,
-    https: true,
+    https: false,
     host: "0.0.0.0",
     port: 80,
   },
