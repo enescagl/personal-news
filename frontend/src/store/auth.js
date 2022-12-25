@@ -20,14 +20,14 @@ const authModule = {
   },
   actions: {
     async loginUser({ commit }, { email, password }) {
-      const userTokens = await this.$app.$axios.post("/auth/login/", {
+      const { data: userTokens } = await this.$app.$axios.post("/auth/login/", {
         email: email,
         password: password,
       });
 
-      await setToken(userTokens.data.access);
-      await setRefreshToken(userTokens.data.refresh);
-      const currentUser = (await this.$app.$axios.get("/users/me/")).data;
+      await setToken(userTokens.access);
+      await setRefreshToken(userTokens.refresh);
+      const { data: currentUser } = await this.$app.$axios.get("/users/me/");
 
       commit(SET_CURRENT_USER, currentUser);
     },
