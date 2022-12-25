@@ -35,10 +35,10 @@ DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 IS_DOCKER = os.getenv('IS_DOCKER', 'false').lower() == 'true'
 
 allowed_hosts_environment = os.environ.get('ALLOWED_HOSTS', None)
-if allowed_hosts_environment:
-    ALLOWED_HOSTS = list(map(lambda host: host.strip(), allowed_hosts_environment.split(',')))
-else:
-    ALLOWED_HOSTS = ['*']
+# if allowed_hosts_environment:
+#     ALLOWED_HOSTS = list(map(lambda host: host.strip(), allowed_hosts_environment.split(',')))
+# else:
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [

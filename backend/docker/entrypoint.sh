@@ -1,13 +1,13 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
-#set -euo pipefail
-echo "Waiting for postgres..."
+set -euo pipefail
+echo "Waiting for Postgres..."
 
 while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
   sleep 0.1
 done
 
-echo "PostgreSQL started"
+echo "Postgres started"
 
 #python manage.py makemigrations
 python manage.py migrate
@@ -15,7 +15,7 @@ python manage.py collectstatic --noinput
 python manage.py creategroups
 python manage.py createcustomusers
 
-if [ -z "$GENERATE_DUMMY" ]; then
+if [[ "${GENERATE_DUMMY}" == "True" ]]; then
   python manage.py createdummydata
 fi
 

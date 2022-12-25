@@ -4,9 +4,11 @@ services:
   api:
     command: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
     environment:
-      - DEBUG=true
+      - DEBUG=True
     volumes:
       - ./backend:/app
+    ports:
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
   frontend:
     build:
       context: ./frontend

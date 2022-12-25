@@ -4,15 +4,15 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV IS_DOCKER True
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential libpq-dev netcat \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update; \
+  apt-get install -y --no-install-recommends build-essential libpq-dev netcat; \
+  rm -rf /var/lib/apt/lists/*;
 
-COPY requirements.txt /tmp/requirements.txt
+COPY requirements.txt /tmp/
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt \
-  && rm -rf /tmp/requirements.txt \
-  && adduser news_user --disabled-password
+RUN pip install --no-cache-dir -r /tmp/requirements.txt; \
+  rm -rf /tmp/requirements.txt; \
+  adduser news_user --disabled-password
 
 WORKDIR /app
 COPY . .

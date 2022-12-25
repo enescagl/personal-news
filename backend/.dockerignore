@@ -1,7 +1,6 @@
 .git
 .gitignore
 venv
-media
 .env
 *.sqlite3
 *.db
