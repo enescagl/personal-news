@@ -2,15 +2,7 @@
   <div class="flex flex-col min-h-screen w-full bg-gray-100" id="app">
     <header class="border-b border-gray-200">
       <nav
-        class="
-          flex flex-col
-          items-center
-          justify-between
-          py-2
-          space-y-8
-          sm:flex-row sm:max-w-screen-sm sm:mx-auto
-          md:max-w-screen-md
-        "
+        class="flex flex-col items-center justify-between py-2 space-y-8 sm:flex-row sm:max-w-screen-sm sm:mx-auto md:max-w-screen-md"
       >
         <div class="font-bold text-4xl">
           <router-link :to="{ name: 'Articles' }">Logo</router-link>
@@ -59,12 +51,28 @@ export default {
   computed: {
     ...mapState("auth", ["currentUser"]),
     ...mapGetters("auth", ["isUserLoggedIn"]),
+    homeRouteAliases() {
+      const homeRoutes = ["Home"];
+      let loopedRoute = this.$router.options.routes.find((route) =>
+        homeRoutes.includes(route.name)
+      );
+
+      while (loopedRoute?.redirect) {
+        homeRoutes.push(loopedRoute.redirect.name);
+        loopedRoute = this.$router.options.routes.find((route) => {
+          return route.name === loopedRoute?.redirect?.name;
+        });
+      }
+      return homeRoutes;
+    },
   },
   methods: {
     ...mapActions("auth", ["logoutUser"]),
     logout() {
       this.logoutUser();
-      this.$router.push({ name: "Home" });
+      if (!this.homeRouteAliases.includes(this.$route.name)) {
+        this.$router.push({ name: "Home" });
+      }
     },
   },
 };
