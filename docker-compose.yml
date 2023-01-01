@@ -3,68 +3,69 @@ version: '3.8'
 services:
   nginx:
     image: nginx:stable
-    container_name: "personal_news_nginx"
+    container_name: nginx
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
-      - api
-      - admin
-      - guvenlikzafiyeti
-      - siberkariyer
-      - blabs
+      - frontend
     ports:
       - 80:80
       - 443:443
     networks:
       - personal_news_network
     volumes:
-      - ./nginx/certs:/etc/certs
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/reverse-proxy/config/templates:/etc/nginx/templates
+      - ./nginx/reverse-proxy/config/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/reverse-proxy/config/pages:/etc/nginx/pages
+      - ./nginx/reverse-proxy/certs:/etc/certs
       - api_media:/usr/share/nginx/html/media:ro
       - api_static:/usr/share/nginx/html/static:ro
-  db:
-    container_name: "personal_news_${POSTGRES_HOST}"
-    image: postgres:latest
-    restart: always
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
   api:
     container_name: "personal_news_api"
     build:
       context: ./backend
+    env_file:
+      - .env
     depends_on:
       - db
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - POSTGRES_HOST
+    volumes:
+      - api_media:/app/media
+      - api_static:/app/static
+    networks:
+      - personal_news_network
   frontend:
     container_name: "personal_news_frontend"
     build:
       context: ./frontend
+    env_file:
+      - .env
     depends_on:
       - api
-    environment:
-      VUE_APP_BASE_URL: http://api:8000
-  frontend_vue3:
-    container_name: "personal_news_frontend_vue3"
-    build:
-      context: ./frontend_vue3
-    depends_on:
-      - api
-    environment:
-      VUE_APP_BASE_URL: http://api:8000
-#    healthcheck:
-#      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
+    networks:
+      - personal_news_network
+    volumes:
+      - ./nginx/frontend/config/nginx.conf:/etc/nginx/nginx.conf
+  db:
+    container_name: ${POSTGRES_HOST}
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - personal_news_network
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+networks:
+  personal_news_network:
 volumes:
   api_media:
   api_static:
-  database:
   frontend:
 
 

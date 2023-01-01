@@ -1,4 +1,11 @@
 module.exports = {
+  devServer: {
+    public: `${process.env.VUE_APP_PUBLIC_DOMAIN}`,
+    https: false,
+    host: "0.0.0.0",
+    port: 80,
+    allowedHosts: ["*"],
+  },
   chainWebpack: (config) => {
     const svgRule = config.module.rule("svg");
 

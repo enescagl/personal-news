@@ -43,6 +43,14 @@ export default {
       return [editorjsBody];
     },
   },
+  watch: {
+    "item.heading"(val) {
+      if (val) {
+        const title = "Personal News";
+        document.title = this.item.heading + title;
+      }
+    },
+  },
 };
 </script>
 

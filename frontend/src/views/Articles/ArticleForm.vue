@@ -4,9 +4,9 @@
       <span v-if="$route.params.id">Edit</span>
       <span v-else>Add</span>
       Article
-      <span class="font-medium" v-if="$route.params.id">{{
-        $route.params.id
-      }}</span>
+      <span class="font-medium" v-if="$route.params.id">
+        {{ $route.params.id }}
+      </span>
     </h2>
     <form @submit.prevent="save" class="flex flex-col items-center space-y-4">
       <div class="relative overflow-hidden inline-block w-full group">
@@ -32,13 +32,14 @@
           />
         </button>
         <input
-          ref="cover-image"
+          ref="coverImage"
           type="file"
           name="cover-image"
           class="text-8xl absolute inset-0 opacity-0"
-          @input="pickImageFile"
+          @change="fileInputChange"
         />
       </div>
+      <img :src="coverPreviewUrl" />
       <div class="flex flex-col w-full">
         <label class="w-1/3" for="heading">Heading</label>
         <input
@@ -103,6 +104,7 @@ export default {
       resourceNamePlural: "articles",
       editor: null,
       isEdit: false,
+      coverPreviewUrl: null,
       editorTools: {
         header: {
           class: Header,
@@ -134,14 +136,12 @@ export default {
     };
   },
   methods: {
-    async pickImageFile() {
-      const imageFile = this.$refs["cover-image"].files[0];
-      console.log(imageFile);
-      this.item = {
-        ...this.item,
-        cover_image: (await this.uploadImageFromFile(imageFile)).file.url,
-      };
-      this.$refs["cover-image"].blur();
+    async fileInputChange() {
+      const {
+        file: { id, url },
+      } = await this.uploadImageFromFile(this.$refs.coverImage.files[0]);
+      this.item.cover_image = id;
+      this.coverPreviewUrl = url;
     },
     async uploadImageFromFile(file) {
       const form = new FormData();
@@ -152,22 +152,22 @@ export default {
       form.append("slug", slug);
       form.append("name", imageName);
 
-      const imageResponse = (
-        await this.create(form, "images", {
-          header: { "content-type": "multipart/form-data" },
-        })
-      ).data;
-
+      const { data: imageResponse } = await this.create(form, "images", {
+        header: { "content-type": "multipart/form-data" },
+      });
       return {
         success: 1,
         file: {
           url: imageResponse.image,
+          id: imageResponse.id,
         },
       };
     },
     async uploadImageFromUrl(url) {
-      const imageResponse = (await this.create({ url }, "images/from_url"))
-        .data;
+      const { data: imageResponse } = await this.create(
+        { url },
+        "images/from_url"
+      );
 
       return {
         success: 1,
