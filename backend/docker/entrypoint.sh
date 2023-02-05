@@ -3,9 +3,11 @@
 set -euo pipefail
 echo "Waiting for Postgres..."
 
-while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
-  sleep 0.1
+while ! pg_isready -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -d ${POSTGRES_DB} -u ${POSTGRES_USER} > /dev/null 2> /dev/null; do
+  echo "Connecting to ${POSTGRES_HOST} Failed"
+  sleep 1
 done
+
 
 echo "Postgres started"
 
