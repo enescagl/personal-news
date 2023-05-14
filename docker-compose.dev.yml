@@ -8,10 +8,9 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "${DEBUG_PORT}:${DEBUG_PORT}"
+      - 9026:9026
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    command: [ "yarn", "dev", "-o" ]
     volumes:
-      - ./frontend:/app
+      - ./frontend_v2:/app
+      - /app/node_modules
