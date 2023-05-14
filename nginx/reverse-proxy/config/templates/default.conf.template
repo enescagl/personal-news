@@ -1,6 +1,12 @@
 # https://medium.com/homullus/vuejs-dev-serve-with-reverse-proxy-cdc3c9756aeb
 
 server {
+    listen 24678;
+    server_name ${VUE_APP_PUBLIC_DOMAIN};
+	return 301 https://$host$request_uri;
+}
+
+server {
     listen 80;
     server_name ${VUE_APP_PUBLIC_DOMAIN};
 	return 301 https://$host$request_uri;
@@ -23,10 +29,7 @@ server {
         proxy_set_header X-Forwarded-Host   $host;
         proxy_set_header X-Forwarded-Server $host;
         proxy_set_header X-Forwarded-Proto  $scheme;
-    }
 
-    location /sockjs-node/ {
-        proxy_pass http://frontend:80;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -43,7 +46,6 @@ server {
         proxy_read_timeout 90s;
         proxy_send_timeout 90s;
     }
-
     
     location /api {
         proxy_pass http://api:8000;
