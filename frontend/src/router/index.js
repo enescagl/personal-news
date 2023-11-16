@@ -46,7 +46,7 @@ router.beforeEach(async (to, from, next) => {
   const token = getToken();
   const refreshToken = getRefreshToken();
   const routeRequiresAuth = to.matched.some(
-    (route) => route.meta?.authRequired
+    (route) => route.meta?.authRequired,
   );
 
   const routeHasAuthView = to.matched.some((route) => route.meta?.hasAuthView);

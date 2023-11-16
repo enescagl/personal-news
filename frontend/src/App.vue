@@ -54,7 +54,7 @@ export default {
     homeRouteAliases() {
       const homeRoutes = ["Home"];
       let loopedRoute = this.$router.options.routes.find((route) =>
-        homeRoutes.includes(route.name)
+        homeRoutes.includes(route.name),
       );
 
       while (loopedRoute?.redirect) {

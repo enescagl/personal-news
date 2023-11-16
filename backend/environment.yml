@@ -1,0 +1,18 @@
+name: personal-news
+channels:
+  - conda-forge
+dependencies:
+  - poetry
+  - python=3.12
+  - nh3
+  - daphne=3.0.2
+  - django=3.2.12
+  - django-cors-headers=3.11.0
+  - django-filter=21.1
+  - djangorestframework=3.13.1
+  - djangorestframework-simplejwt=5.1.0
+  - drf-spectacular=0.22.0
+  - pillow
+  - python-dotenv=0.20.0
+  - requests
+  - psycopg2-binary

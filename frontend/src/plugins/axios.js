@@ -6,7 +6,7 @@ let $axios;
 // eslint-disable-next-line no-unused-vars
 axiosPlugin.install = function (Vue, _options) {
   let instance = axios.create({
-    baseURL: `${process.env.VUE_APP_BASE_URL}/api`,
+    baseURL: `/api`,
   });
   instance = handleUnauthorizedRequest(instance);
   instance = fillAxiosHeader(instance);

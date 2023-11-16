@@ -73,6 +73,7 @@ import { parseBlocksMixin } from "@/mixins/editorjsMixins";
 import slugify from "slugify";
 
 export default {
+  name: "article-form-page",
   mixins: [
     baseMixin,
     retrieveMixin,
@@ -148,7 +149,7 @@ export default {
     async uploadImageFromUrl(url) {
       const { data: imageResponse } = await this.create(
         { url },
-        "images/from_url"
+        "images/from_url",
       );
 
       return {

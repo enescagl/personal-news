@@ -1,0 +1,4 @@
+{
+	"flake8.cwd": "${workspaceFolder}/backend",
+	"eslint.workingDirectories": [{ "mode": "auto" }]
+}

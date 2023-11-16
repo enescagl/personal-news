@@ -42,7 +42,7 @@ const createMixin = {
     async create(
       item = this.item,
       resource = this.resourceNamePlural,
-      { axiosConfig } = {}
+      { axiosConfig } = {},
     ) {
       return await this.$axios.post(`/${resource}/`, item, {
         ...this.$axios.defaults,
@@ -64,7 +64,7 @@ const updateMixin = {
       lookupField = "id",
       { axiosConfig } = {},
       resource = this.resourceNamePlural,
-      partial = false
+      partial = false,
     ) {
       if (!partial) {
         return await this.$axios.put(
@@ -73,7 +73,7 @@ const updateMixin = {
           {
             ...this.$axios.defaults,
             ...axiosConfig,
-          }
+          },
         );
       } else {
         return await this.$axios.patch(
@@ -82,7 +82,7 @@ const updateMixin = {
           {
             ...this.$axios.defaults,
             ...axiosConfig,
-          }
+          },
         );
       }
     },
@@ -105,7 +105,7 @@ const listMixin = {
         filters: this.filters,
         search: this.searchTerm,
       },
-      resource = this.resourceNamePlural
+      resource = this.resourceNamePlural,
     ) {
       let queryString = "";
 
@@ -144,7 +144,7 @@ const retrieveMixin = {
   methods: {
     async retrieve(
       lookupValue = this.$route.params[this.queryParam],
-      resource = this.resourceNamePlural
+      resource = this.resourceNamePlural,
     ) {
       const response = (await this.$axios.get(`/${resource}/${lookupValue}/`))
         .data;

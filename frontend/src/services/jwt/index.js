@@ -36,7 +36,7 @@ export function fillAxiosHeader(axiosInstance) {
     },
     (error) => {
       Promise.reject(error);
-    }
+    },
   );
   return axiosInstance;
 }
@@ -66,15 +66,14 @@ export function handleUnauthorizedRequest(axiosInstance) {
               setToken(res.data.access);
               setRefreshToken(res.data.refresh);
               const token = getToken();
-              axiosInstance.defaults.headers.common[
-                "Authorization"
-              ] = `${jwtConfig.TOKEN_TYPE} ${token}`;
+              axiosInstance.defaults.headers.common["Authorization"] =
+                `${jwtConfig.TOKEN_TYPE} ${token}`;
               return axiosInstance(originalRequest);
             }
           });
       }
       return Promise.reject(error);
-    }
+    },
   );
   return axiosInstance;
 }

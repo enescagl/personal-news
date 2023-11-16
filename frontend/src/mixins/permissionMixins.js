@@ -8,7 +8,7 @@ const userHasPermissionMixin = {
     hasPermission(permissionType, contentType = this.resourceName) {
       return this.currentUserPermissions.filter(
         (permission) =>
-          permission.codename === `${permissionType}_${contentType}`
+          permission.codename === `${permissionType}_${contentType}`,
       );
     },
   },

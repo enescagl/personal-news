@@ -25,6 +25,7 @@ import { parseBlocksMixin } from "@/mixins/editorjsMixins";
 const edjsParser = edjsHTML();
 
 export default {
+  name: "article-detail-page",
   mixins: [baseMixin, retrieveMixin, parseBlocksMixin],
   data() {
     return {

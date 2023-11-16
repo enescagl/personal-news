@@ -20,14 +20,18 @@ from django.urls.conf import include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
-    path('api/', include('news.urls')),
-    path('api/', include('authentication.urls')),
+    path("api/", include("news.urls")),
+    path("api/", include("authentication.urls")),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
-        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-        path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path(
+            "api/swagger/",
+            SpectacularSwaggerView.as_view(url_name="schema"),
+            name="swagger-ui",
+        ),
     ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

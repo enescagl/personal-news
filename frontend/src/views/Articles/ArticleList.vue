@@ -53,8 +53,8 @@
 </template>
 <script>
 import EArticleCard from "@/components/EArticleCard.vue";
-import PenSVG from "@/assets/svgs/pen.svg";
-import SearchSVG from "@/assets/svgs/search.svg";
+import IconPencil from "~icons/heroicons/pencil";
+import IconMagnifyingGlass from "~icons/heroicons/magnifying-glass";
 import {
   baseMixin,
   destroyMixin,
@@ -68,6 +68,7 @@ import { mapGetters } from "vuex";
 import { ADD } from "@/permission-types";
 
 export default {
+  name: "article-list-page",
   mixins: [
     baseMixin,
     listMixin,
@@ -77,8 +78,8 @@ export default {
   ],
   components: {
     EArticleCard,
-    SearchSVG,
-    PenSVG,
+    SearchSVG: IconMagnifyingGlass,
+    PenSVG: IconPencil,
   },
   data() {
     return {

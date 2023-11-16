@@ -39,10 +39,11 @@
 </template>
 
 <script>
-import ArrowRightSVG from "@/assets/svgs/arrow-right.svg";
+import ArrowRightSVG from "~icons/heroicons/arrow-right";
 import { mapActions } from "vuex";
 
 export default {
+  name: "login-page",
   components: {
     ArrowRightSVG,
   },

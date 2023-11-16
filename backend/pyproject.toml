@@ -1,0 +1,61 @@
+[project]
+name = "personal-news-api"
+version = "0.1"
+dependencies = [	
+	"bleach",
+	"daphne==3.0.2",
+	"django==3.2.12",
+	"django-cors-headers==3.11.0",
+	"django-filter==21.1",
+	"djangorestframework==3.13.1",
+	"djangorestframework-simplejwt==5.1.0",
+	"drf-spectacular==0.22.0",
+	"pillow",
+	"python-dotenv==0.20.0",
+	"requests",
+	"psycopg2-binary",
+]
+
+[project.optional-dependencies]
+dev = [
+	"debugpy",
+	"pre-commit",
+	"bandit",
+	"flake8",
+	"black"
+]
+
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["enescagl <enes.cagliyan@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+nh3 = "*"
+daphne = "3.0.2"
+django = "3.2.12"
+django-cors-headers = "3.11.0"
+django-filter = "21.1"
+djangorestframework = "3.13.1"
+djangorestframework-simplejwt = "5.1.0"
+drf-spectacular = "0.22.0"
+pillow = "*"
+python-dotenv = "0.20.0"
+requests = "*"
+psycopg2-binary = "*"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+debugpy = "*"
+pre-commit = "*"
+bandit = "*"
+flake8 = "*"
+black = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

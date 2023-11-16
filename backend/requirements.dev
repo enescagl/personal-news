@@ -1,0 +1,5 @@
+bandit
+pre-commit
+debugpy
+flake8
+black

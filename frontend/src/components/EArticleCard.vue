@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import MoreVerticalSVG from "@/assets/svgs/more-vertical.svg";
+import MoreVerticalSVG from "~icons/heroicons/ellipsis-vertical";
 import ENavDropdown from "@/components/common/ENavDropdown.vue";
 import { mapGetters } from "vuex";
 import { CHANGE, DELETE } from "@/permission-types";

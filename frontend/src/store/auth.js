@@ -44,7 +44,7 @@ const authModule = {
     currentUserPermissions(state) {
       return [
         ...new Set(
-          state.currentUser?.groups.map((group) => group.permissions).flat()
+          state.currentUser?.groups.map((group) => group.permissions).flat(),
         ),
       ];
     },
